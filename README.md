@@ -52,7 +52,7 @@ export default {
 </script>
 ```
 
-若要使用 Compostion API，即\<script setup>，请查阅：https://staging-cn.vuejs.org/guide/introduction.html，并在左侧栏将 API 风格偏好切换为'组合式'，下面是一些说明：
+若要使用 Compostion API，即\<script setup>，请查阅：https://staging-cn.vuejs.org/guide/introduction.html ，并在左侧栏将 API 风格偏好切换为'组合式'，下面是一些说明：
 
 ```vue
 <script setup>
