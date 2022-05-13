@@ -1,119 +1,67 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from '@/components/HelloWorld.vue'
+import { RouterView } from 'vue-router'
+import TopNav from './components/public/TopNav.vue'
+import LeftBar from './components/public/LeftBar.vue'
+import RightBar from './components/public/RightBar.vue'
+
+// 不显示右侧边栏的路由
+const excludeRightBar = ['/todo-asset', '/settings', '/login', '/statistic']
+// 不显示顶、左侧边栏的路由
+const excludeTopLeft = ['/login']
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <!--顶栏-->
+  <top-nav v-show="!excludeTopLeft.includes($route.path)"/>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+  <article :class="['low-wrapper', excludeTopLeft.includes($route.path) ? 'full-wrapper' : '']">
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+    <!--左侧边栏-->
+    <left-bar v-show="!excludeTopLeft.includes($route.path)"/>
 
-  <RouterView />
+    <!--中心内容-->
+    <section :class="['center-content', excludeTopLeft.includes($route.path) ? 'full-content' : '']">
+      <router-view v-slot="{ Component }">
+        <keep-alive>
+          <component :is="Component" />
+        </keep-alive>
+      </router-view>
+    </section>
+
+    <!--右侧边栏-->
+    <right-bar v-show="!excludeRightBar.includes($route.path)"/>
+    
+  </article>
 </template>
 
 <style>
-@import '@/assets/base.css';
+body {
+  padding: 0;
+  margin: 0;
+}
+</style>
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+<style scoped>
+.low-wrapper {
+  display: flex;
+  font-size: 1rem;
+  height: calc(100vh - 4em);
+  justify-content: space-around;
 }
 
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.full-wrapper {
+  height: 100vh;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.center-content {
+  flex-grow: 1;
+  margin: .3em .4em;
+  box-sizing: border-box;
+  border: 1px solid black;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.full-content {
+  margin: 0;
+  border: none;
 }
 </style>
