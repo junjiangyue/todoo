@@ -69,7 +69,11 @@ const workOptions: ECOption = {
         valueFormatter: value => `${value} Events`
       }
     }
-  ]
+  ],
+  grid: {
+    top: 20,
+    bottom: 20
+  }  
 }
 
 // 番茄钟图表选项
@@ -99,7 +103,10 @@ const tomatoOptions: ECOption = {
       }      
     }
   ],
-
+  grid: {
+    top: 20,
+    bottom: 20
+  }
 }
 
 onMounted(() => {
