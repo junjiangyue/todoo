@@ -134,11 +134,7 @@ function navigate (path) {
 ## 项目结构
 
 ```
-│  │  ├─ common.css
-│  │  ├─ icon
-│  │  └─ logo.svg│  │  ├─ common.css
-│  │  ├─ icon
-│  │  └─ logo.svgtodoo
+todoo
 ├─ index.html // 项目入口
 ├─ package-lock.json
 ├─ package.json // 依赖配置
