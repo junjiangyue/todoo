@@ -57,7 +57,6 @@ body {
   flex-grow: 1;
   margin: .3em .4em;
   box-sizing: border-box;
-  border: 1px solid black;
 }
 
 .full-content {
