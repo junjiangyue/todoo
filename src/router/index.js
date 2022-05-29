@@ -6,7 +6,23 @@ const router = createRouter({
     {
       path: '/',
       name: 'daily-todo',
-      component: () => import('@/views/DailyTodo.vue')
+      component: () => import('@/views/DailyTodo.vue'),
+      children:[
+        {
+          path:'/TimeTable',
+          name:'TimeTable',
+          components:{
+            modeShift:()=> import('@/views/TimeTable.vue')
+           }
+        },
+        {
+          path:'',
+          name:'ListMode',
+          components:{
+            modeShift:()=> import('@/views/ListMode.vue')
+           }
+        }
+      ]
     },
     {
       path: '/login',
