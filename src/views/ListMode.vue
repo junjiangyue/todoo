@@ -28,12 +28,22 @@ export default {
                     checkState:1,
                     checkLabel:"学习"
                 }
-            ]
+            ],
+            today:'30',
+            yesterday:'29',
+            daybeforeyesterday:'28',
+            tomorrow:'31',
+            dayaftertomorrow:'1',
+            date:'',
+            activeNames:['1','2','3'],
         }
     },
      methods:{
         getDate(){
-
+            var d = new Date();
+            this.date =(d.getMonth()+1).toString()+"月"+d.getDate().toString()+"日";
+            console.log(d.getDate());
+            this.today=d.getDate();
         }
     },
     mounted(){
@@ -44,108 +54,121 @@ export default {
 
 <template>
 <div class="Listmode">
-    <div class="daypicker">
-        <el-row class="row">
-            <el-col :span="4"><div>
-                <img src="@/assets/icon/leftarrow.png"/>
-            </div>
+        <el-row>
+            <el-col :span="12">
+            <div class="daypicker">
+                <el-row class="row">
+                    <el-col :span="4"><div>
+                        <img src="@/assets/icon/leftarrow.png"/>
+                    </div>
+                    </el-col>
+                    <el-col :span="3"><div>{{daybeforeyesterday}}</div>
+                    </el-col>
+                    <el-col :span="3"><div>{{yesterday}}</div></el-col>
+                    <el-col :span="3"><div class="today">
+                        <div>{{today}}</div></div>
+                        </el-col>
+                    <el-col :span="3"><div>{{tomorrow}}</div></el-col>
+                    <el-col :span="3"><div>{{dayaftertomorrow}}</div></el-col>
+                    <el-col :span="5"><div>
+                        <img src="@/assets/icon/rightarrow.png"/>
+                    </div></el-col>
+                </el-row>
+                </div>
             </el-col>
-            <el-col :span="3"><div>1</div>
-            </el-col>
-            <el-col :span="3"><div>2</div></el-col>
-            <el-col :span="3"><div>3</div></el-col>
-            <el-col :span="3"><div>4</div></el-col>
-            <el-col :span="3"><div>5</div></el-col>
-            <el-col :span="5"><div>
-                <img src="@/assets/icon/rightarrow.png"/>
-            </div></el-col>
+            <el-col :span="12" style="display:flex;align-items: center;">{{date}}，今天</el-col>
         </el-row>
-    </div>
-    <div class="course">
-        <div class="headline2"><img src="@/assets/icon/downarrow.png"/>今日课程</div>
-        <div  v-for="(item) in courseData" :key="item.courseId">
-        <el-row class="courseItem" >
-            <el-col :span="4" class="courseTime">
-                {{item.courseTime}}
-            </el-col>
-            <el-col :span="16" class="courseName">
-                {{item.courseName}}
-            </el-col>
-        </el-row>
-        </div>
-    </div>
-    <div class="todo">
-        <div class="headline2"><img src="@/assets/icon/downarrow.png"/>我的日程</div>
-        <div class="input">
-            <el-input v-model="input4" class="w-50 m-2" placeholder="添加日程到今天">
-        <template #prefix>
-          <el-icon :size="28"><CirclePlus /></el-icon>
+
+
+    <div class="demo-collapse">
+    <el-collapse v-model="activeNames" @change="handleChange">
+      <el-collapse-item  name="1" >
+          <template #title >
+          <div class="collapse-title">今日课程</div>
         </template>
-      </el-input>
-        </div>
-        <div  v-for="(mission) in todolist" :key = "mission.missionId">
-            <el-row class="mission">
-                <el-col :span="1">
-                   <el-checkbox v-model = "complete" size="large"/>
+        <div class="course">
+            <div  v-for="(item) in courseData" :key="item.courseId">
+            <el-row class="courseItem" >
+                <el-col :span="4" class="courseTime">
+                    {{item.courseTime}}
                 </el-col>
-                <el-col :span="4">
-                    {{mission.missionTime}}
-                </el-col>
-                <el-col :span="10">
-                    {{mission.missionTitle}}
-                </el-col>
-                <el-col :span="4" class="label">
-                    {{mission.missionLabel}}
-                </el-col>
-                <el-col :span="2">
-                    ···
+                <el-col :span="19" class="courseName">
+                    {{item.courseName}}
                 </el-col>
             </el-row>
+            </div>
         </div>
-    </div>
-    <div class="check">
-        <div class="headline2"><img src="@/assets/icon/downarrow.png"/>每日打卡</div>
-        <div class="checklist" v-for="(check) in checklist" :key = "check.checkId">
-            <el-row class="mission">
-                <el-col :span="1">
-                   <el-checkbox v-model = "complete" size="large"/>
-                </el-col>
-                <el-col :span="4">
-                    {{check.checkTime}}
-                </el-col>
-                <el-col :span="10">
-                    {{check.checkTitle}}
-                </el-col>
-                <el-col :span="4">
-                    {{check.checkLabel}}
-                </el-col>
-                <el-col :span="2">
-                    ···
-                </el-col>
-            </el-row>
+      </el-collapse-item>
+
+
+      <el-collapse-item name="2">
+           <template #title >
+          <div class="collapse-title">我的日程</div>
+        </template>
+        <div class="todo">
+            <div class="input">
+                <el-input v-model="input4" class="w-50 m-2" placeholder="添加日程到今天">
+            <template #prefix>
+            <el-icon :size="28"><CirclePlus /></el-icon>
+            </template>
+        </el-input>
+            </div>
+            <div  v-for="(mission) in todolist" :key = "mission.missionId">
+                <el-row class="mission">
+                    <el-col :span="1">
+                    <el-checkbox v-model = "complete" size="large"/>
+                    </el-col>
+                    <el-col :span="4">
+                        {{mission.missionTime}}
+                    </el-col>
+                    <el-col :span="10">
+                        {{mission.missionTitle}}
+                    </el-col>
+                    <el-col :span="4" class="label">
+                        {{mission.missionLabel}}
+                    </el-col>
+                    <el-col :span="2">
+                        ···
+                    </el-col>
+                </el-row>
+            </div>
         </div>
+      </el-collapse-item>
+      <el-collapse-item name="3">
+          <template #title >
+            <div class="collapse-title">每日打卡</div>
+            </template>
+        <div class="check">
+                <div class="checklist" v-for="(check) in checklist" :key = "check.checkId">
+                    <el-row class="mission">
+                        <el-col :span="1">
+                        <el-checkbox v-model = "complete" size="large"/>
+                        </el-col>
+                        <el-col :span="4">
+                            {{check.checkTime}}
+                        </el-col>
+                        <el-col :span="10">
+                            {{check.checkTitle}}
+                        </el-col>
+                        <el-col :span="4">
+                            {{check.checkLabel}}
+                        </el-col>
+                        <el-col :span="2">
+                            ···
+                        </el-col>
+                    </el-row>
+                </div>
     </div>
+      </el-collapse-item>
+    </el-collapse>
+  </div>
 </div>
 </template>
 
 <style scoped>
-.headline2{
 
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 24px;
-    /* or 150% */
-
-    display: flex;
-    align-items: center;
-    letter-spacing: 0.44px;
-
-    color: #212121;
-    margin-top: 1em;
-    margin-bottom: 10px;
-
-}
 .courseItem{
+    width: 100%;
     height: 64px;
     display: flex;
     align-items: center;
@@ -211,7 +234,7 @@ export default {
     color: #757575;
 }
 .el-input {
-    width: 95%;
+    width: 98%;
     height: 52px;
 }
 :deep().el-input__wrapper {
@@ -223,8 +246,46 @@ export default {
     padding: 1px 11px;
     background-color: #EDEDED;
     background-image: none;
-    border-radius: var(--el-input-border-radius,var(--el-border-radius-base));
+    border-radius: 10px;
     transition: var(--el-transition-box-shadow);
-    box-shadow: 0 0 0 1px var(--el-input-border-color,var(--el-border-color)) inset;
+    box-shadow: 0 0 0 0px var(--el-input-border-color,var(--el-border-color)) inset;
+}
+.today{
+    background-color: #367BF5;
+    color: #fff;
+    border-radius: 100px;
+    width: 1.6em;
+    height: 2em;
+    display: flex;
+    align-items: center;
+    margin-left: 0.3em;
+    padding-left: 0.4em;
+}
+:deep().el-collapse-item__header {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    /* or 150% */
+
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.44px;
+
+    color: #212121;
+    margin-top: 0.4em;
+    margin-bottom: 4px;
+    border-top: 0;
+    border-bottom: 0;
+}
+.collapse-title {
+    flex: 1 0 90%;
+    order: 1;
+}
+:deep().el-collapse {
+    border-top: 0;
+    border-bottom: 0;
+}
+:deep().el-collapse-item__content {
+    padding-bottom:14px;
 }
 </style>

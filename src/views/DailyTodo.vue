@@ -36,8 +36,8 @@ export default {
 
     <div class="shift">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :router="true">
-            <el-menu-item index="/" @click="saveIndex('/')"><img :src="ListIcon"/>清单模式</el-menu-item>
-            <el-menu-item index="/TimeTable"  @click="saveIndex('/TimeTable')"><img :src="TableIcon"/>课表模式</el-menu-item>
+            <el-menu-item index="/" @click="saveIndex('/')"><img :src="ListIcon" style="margin-right: 0.5em;" />清单模式</el-menu-item>
+            <el-menu-item index="/TimeTable"  @click="saveIndex('/TimeTable')"><img :src="TableIcon" style="margin-right: 0.5em;"/>课表模式</el-menu-item>
         </el-menu>
     </div>
     <div>
