@@ -38,6 +38,7 @@ const excludeTopLeft = ['/login']
 body {
   padding: 0;
   margin: 0;
+  font-family: 'PingFang SC'
 }
 </style>
 
