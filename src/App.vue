@@ -1,13 +1,23 @@
 <script setup>
+import { ref } from 'vue'
 import { RouterView } from 'vue-router'
 import TopNav from './components/public/TopNav.vue'
 import LeftBar from './components/public/LeftBar.vue'
-import RightBar from './components/public/RightBar.vue'
+import TodoSider from './components/public/TodoSider.vue'
+import CalendarSider from './components/calendar/CalendarSider.vue'
 
 // 不显示右侧边栏的路由
 const excludeRightBar = ['/todo-asset', '/settings', '/login', '/statistic', '/TimeTable']
 // 不显示顶、左侧边栏的路由
 const excludeTopLeft = ['/login']
+
+// 选中日期
+const currDate = ref(new Date())
+
+// click-date handler
+function handleClickDate (date) {
+  currDate.value = date
+}
 </script>
 
 <template>
@@ -23,13 +33,16 @@ const excludeTopLeft = ['/login']
     <section :class="['center-content', excludeTopLeft.includes($route.path) ? 'full-content' : '']">
       <router-view v-slot="{ Component }">
         <keep-alive>
-          <component :is="Component" />
+          <component :is="Component" @click-date="handleClickDate"/>
         </keep-alive>
       </router-view>
     </section>
 
     <!--右侧边栏-->
-    <right-bar v-if="!excludeRightBar.includes($route.path)"/>
+    <todo-sider v-if="!excludeRightBar.includes($route.path) && $route.path === '/'"/>
+    <calendar-sider
+      v-else-if="!excludeRightBar.includes($route.path) && $route.path === '/calendar'"
+      :date="currDate"/>
     
   </article>
 </template>
