@@ -18,6 +18,14 @@ export default {
                     missionPriority:"极高",
                     missionState:1,
                     missionLabel:"学习"
+                },
+                {
+                    missionId:2,
+                    missionTime:"10:00 - 11:35",
+                    missionTitle:"写项目作业",
+                    missionPriority:"极高",
+                    missionState:1,
+                    missionLabel:"学习"
                 }
             ],
             checklist:[
@@ -43,13 +51,10 @@ export default {
                 name: '',
                 describe:'',
                 sub:'',
-                region: '',
+                priority: '',
+                label:'',
                 date1: '',
-                date2: '',
-                delivery: false,
-                type: [],
-                resource: '',
-                desc: ''}
+                date2: '',}
         }
     },
      methods:{
@@ -67,7 +72,16 @@ export default {
             .catch(_ => {});
         },
         add(){
-            console.log(this.form.name);
+            console.log(this.form);
+            this.visible = false;
+            // 上传到后端
+
+            // 从后端重新获取用户当天的任务列表
+
+        },
+        godetail(missionId){
+            this.$emit("mission",missionId);
+            //console.log(missionId)
         }
     },
     mounted(){
@@ -138,7 +152,7 @@ export default {
         </el-input>
             </div>
             <div v-for="(mission) in todolist" :key = "mission.missionId">
-                <el-row class="mission" @click="godetail">
+                <el-row class="mission" @click="godetail(mission.missionId)">
                     <el-col :span="1">
                     <el-checkbox v-model = "complete" size="large"/>
                     </el-col>
@@ -178,27 +192,31 @@ export default {
                         <div class="line">
                         <img style="margin-left: 1em;" src="@/assets/icon/label.png"/>
                         <span style="font-size:14px;padding:5px;">标签</span>
-                        <input class="sub" v-model="form.sub" autocomplete="off" placeholder="    添加子任务"/>
+                        <el-radio-group v-model="form.label" size="medium">
+                            <el-radio-button label="学习" ></el-radio-button>
+                            <el-radio-button label="生活"></el-radio-button>
+                            <el-radio-button label="工作"></el-radio-button>
+                            <el-radio-button label="休闲"></el-radio-button>
+                        </el-radio-group>
                         </div>
                     </el-form-item>
                     <el-form-item>
                          <div class="line">
                             <img style="margin-left: 1em;" src="@/assets/icon/priority.png"/>
                             <span style="font-size:14px;padding:5px;">重要程度</span>
-                            <el-select v-model="form.region" placeholder="不重要不紧急">
-                            <el-option label="Zone No.1" value="shanghai" />
-                            <el-option label="Zone No.2" value="beijing" />
-                            <el-option label="Zone No.1" value="shanghai" />
-                            <el-option label="Zone No.2" value="beijing" />
-                            <el-option label="Zone No.2" value="beijing" />
+                            <el-select v-model="form.priority" placeholder="不重要不紧急">
+                            <el-option label="重要且紧急" value="1" />
+                            <el-option label="重要不紧急" value="2" />
+                            <el-option label="不重要紧急" value="3" />
+                            <el-option label="不重要不紧急" value="4" />
                             </el-select>
                         </div>
                     </el-form-item>
                 </el-col>
                 <el-col :span="6" style="background-color:#EDEDED;border-radius: 0px 10px 0px 0px;border-left: solid 1px #E3E5E5;">
                     <div class="time">
-                    <div><el-button class="thisday">{{date}}/今天</el-button></div>
-                    <div><el-button class="thisday">{{date}}/明天</el-button></div>
+                    <div><el-button class="thisday" autofocus="true" @click="form.date1=date">{{date}}/今天</el-button></div>
+                    <div><el-button class="thisday"  @click="form.date1=date">{{date}}/明天</el-button></div>
                     <div><el-button class="thisday">没有日期</el-button></div>
                     <div>
                         <el-dropdown trigger="click">
@@ -208,7 +226,7 @@ export default {
                             <template #dropdown>
                                 <div class="block">
                                     <el-date-picker
-                                    v-model="value1"
+                                    v-model="form.date1"
                                     type="datetimerange"
                                     range-separator="To"
                                     start-placeholder="开始时间"
@@ -264,7 +282,7 @@ export default {
 
 .courseItem{
     width: 100%;
-    height: 64px;
+    height: 4em;
     display: flex;
     align-items: center;
 }
@@ -470,5 +488,8 @@ input:focus{
 .thisday{
     border-radius: 10px;
     margin-bottom: 1em;
+}
+:deep().el-collapse-item__header{
+    height: 1.7em;
 }
 </style>
