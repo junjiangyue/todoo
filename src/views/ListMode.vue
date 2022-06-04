@@ -1,4 +1,5 @@
 <script>
+
 export default {
      data(){
         return{
@@ -12,6 +13,14 @@ export default {
             todolist:[
                 {
                     missionId:1,
+                    missionTime:"10:00 - 11:35",
+                    missionTitle:"写项目作业",
+                    missionPriority:"极高",
+                    missionState:1,
+                    missionLabel:"学习"
+                },
+                {
+                    missionId:2,
                     missionTime:"10:00 - 11:35",
                     missionTitle:"写项目作业",
                     missionPriority:"极高",
@@ -36,6 +45,16 @@ export default {
             dayaftertomorrow:'1',
             date:'',
             activeNames:['1','2','3'],
+            visible:false,
+            formLabelWidth:'140px',
+            form:{
+                name: '',
+                describe:'',
+                sub:'',
+                priority: '',
+                label:'',
+                date1: '',
+                date2: '',}
         }
     },
      methods:{
@@ -44,6 +63,25 @@ export default {
             this.date =(d.getMonth()+1).toString()+"月"+d.getDate().toString()+"日";
             console.log(d.getDate());
             this.today=d.getDate();
+        },
+        handleClose(done) {
+            this.$confirm('确认关闭？')
+            .then(_ => {
+                done();
+            })
+            .catch(_ => {});
+        },
+        add(){
+            console.log(this.form);
+            this.visible = false;
+            // 上传到后端
+
+            // 从后端重新获取用户当天的任务列表
+
+        },
+        godetail(missionId){
+            this.$emit("mission",missionId);
+            //console.log(missionId)
         }
     },
     mounted(){
@@ -107,14 +145,14 @@ export default {
         </template>
         <div class="todo">
             <div class="input">
-                <el-input v-model="input4" class="w-50 m-2" placeholder="添加日程到今天">
+                <el-input v-model="input4" placeholder="添加日程到今天"  @click="visible=true">
             <template #prefix>
             <el-icon :size="28"><CirclePlus /></el-icon>
             </template>
         </el-input>
             </div>
-            <div  v-for="(mission) in todolist" :key = "mission.missionId">
-                <el-row class="mission">
+            <div v-for="(mission) in todolist" :key = "mission.missionId">
+                <el-row class="mission" @click="godetail(mission.missionId)">
                     <el-col :span="1">
                     <el-checkbox v-model = "complete" size="large"/>
                     </el-col>
@@ -133,6 +171,81 @@ export default {
                 </el-row>
             </div>
         </div>
+
+       <el-dialog v-model="visible">
+            <el-form :model="form" >
+            <el-row>
+                <el-col :span="18">
+                    <el-form-item>
+                        <input class="name" v-model="form.name" autocomplete="off" @keyup.enter="add"  placeholder="    准备做什么？"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <input  class="describe" v-model="form.describe" autocomplete="off" placeholder="    添加描述"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <div class="line">
+                        <img style="margin-left: 1em;" src="@/assets/icon/sub.png"/>
+                        <input class="sub" v-model="form.sub" autocomplete="off" placeholder="    添加子任务"/>
+                        </div>
+                    </el-form-item>
+                    <el-form-item >
+                        <div class="line">
+                        <img style="margin-left: 1em;" src="@/assets/icon/label.png"/>
+                        <span style="font-size:14px;padding:5px;">标签</span>
+                        <el-radio-group v-model="form.label" size="medium">
+                            <el-radio-button label="学习" ></el-radio-button>
+                            <el-radio-button label="生活"></el-radio-button>
+                            <el-radio-button label="工作"></el-radio-button>
+                            <el-radio-button label="休闲"></el-radio-button>
+                        </el-radio-group>
+                        </div>
+                    </el-form-item>
+                    <el-form-item>
+                         <div class="line">
+                            <img style="margin-left: 1em;" src="@/assets/icon/priority.png"/>
+                            <span style="font-size:14px;padding:5px;">重要程度</span>
+                            <el-select v-model="form.priority" placeholder="不重要不紧急">
+                            <el-option label="重要且紧急" value="1" />
+                            <el-option label="重要不紧急" value="2" />
+                            <el-option label="不重要紧急" value="3" />
+                            <el-option label="不重要不紧急" value="4" />
+                            </el-select>
+                        </div>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6" style="background-color:#EDEDED;border-radius: 0px 10px 0px 0px;border-left: solid 1px #E3E5E5;">
+                    <div class="time">
+                    <div><el-button class="thisday" autofocus="true" @click="form.date1=date">{{date}}/今天</el-button></div>
+                    <div><el-button class="thisday"  @click="form.date1=date">{{date}}/明天</el-button></div>
+                    <div><el-button class="thisday">没有日期</el-button></div>
+                    <div>
+                        <el-dropdown trigger="click">
+                            <span class="el-dropdown-link">
+                            选择时间段<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                            </span>
+                            <template #dropdown>
+                                <div class="block">
+                                    <el-date-picker
+                                    v-model="form.date1"
+                                    type="datetimerange"
+                                    range-separator="To"
+                                    start-placeholder="开始时间"
+                                    end-placeholder="结束时间"/>
+                                </div>
+                            </template>
+                        </el-dropdown>
+                    </div>
+                    </div>
+                </el-col>
+            </el-row>
+            </el-form>
+            <template #footer>
+            <span class="dialog-footer">
+                <el-button style="border-radius: 10px;" @click="visible = false">取消</el-button>
+                <el-button style="border-radius: 10px;background-color: #367BF5;color: #fff;" @click="add">确定</el-button>
+            </span>
+            </template>
+        </el-dialog>
       </el-collapse-item>
       <el-collapse-item name="3">
           <template #title >
@@ -169,15 +282,23 @@ export default {
 
 .courseItem{
     width: 100%;
-    height: 64px;
+    height: 4em;
     display: flex;
     align-items: center;
 }
 .mission{
-    height: 64px;
+    height: 48px;
     display: flex;
     align-items: center;
+    margin-top: 10px;
+    cursor: pointer;
+    width: 98%;
 }
+.mission:hover{
+    background-color: #E5EFFF;
+    transition: all 0.4s; 
+}
+
 .courseTime{
     height: 64px;
     background: #E6EFFF;
@@ -287,5 +408,88 @@ export default {
 }
 :deep().el-collapse-item__content {
     padding-bottom:14px;
+}
+:deep().el-dialog{
+    border-radius: 10px;
+}
+.name{
+    border: 0px;
+    height: 3.8em;
+    width: 100%;
+    background-color: #EDEDED;
+    border-radius: 10px 0px 0px 0px;
+}
+.describe{
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: solid 1px #E0E0E0;
+    height: 2.8em;
+    width: 100%;
+}
+.line{
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: solid 1px #E0E0E0;
+    height: 2.5em;
+    width: 37em;
+    display: flex;
+    align-items: center
+}
+.sub{
+    border: 0;
+    height: 2.5em;
+    width: 37em;
+}
+:deep().el-dialog__body{
+    padding-top: 0;
+    padding: 0;
+}
+.el-form-item {
+    display: flex;
+    --font-size: 18px;
+    margin-bottom: 0;
+}
+input:focus{
+    border: #367BF5 !important;
+    outline: none;
+}
+:deep().el-dialog__header {
+    padding: 0;
+    padding-bottom: 0;
+    margin-right: 0;
+    word-break: break-all;
+}
+.time{
+    display: inline-grid;
+    justify-content: center;
+    align-items: center;
+    justify-items: stretch;
+    align-content: center;
+    margin-top: 3em;
+    margin-bottom: 2em;
+    width: 100%;
+
+}
+:deep().el-scrollbar {
+    overflow: hidden;
+    position: relative;
+    height: 5em;
+}
+:deep().el-range-editor.el-input__inner {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    margin-top: 3em;
+    margin-bottom: 3em;
+    width: 20em;
+}
+.thisday{
+    border-radius: 10px;
+    margin-bottom: 1em;
+}
+:deep().el-collapse-item__header{
+    height: 1.7em;
 }
 </style>

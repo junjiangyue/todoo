@@ -18,6 +18,13 @@ const currDate = ref(new Date())
 function handleClickDate (date) {
   currDate.value = date
 }
+
+const getMission = v => {
+      console.log('app.vue收到的:',v);
+      missionID.value = v;
+      console.log('app.missionID:',missionID.value);
+    }
+const missionID = ref();
 </script>
 
 <template>
@@ -33,13 +40,15 @@ function handleClickDate (date) {
     <section :class="['center-content', excludeTopLeft.includes($route.path) ? 'full-content' : '']">
       <router-view v-slot="{ Component }">
         <keep-alive>
-          <component :is="Component" @click-date="handleClickDate"/>
+          <component :is="Component" @click-date="handleClickDate" @mission="getMission"/>
         </keep-alive>
       </router-view>
     </section>
 
     <!--右侧边栏-->
-    <todo-sider v-if="!excludeRightBar.includes($route.path) && $route.path === '/'"/>
+    <todo-sider
+      v-if="!excludeRightBar.includes($route.path) && $route.path === '/'"
+      :msg="missionID"/>
     <calendar-sider
       v-else-if="!excludeRightBar.includes($route.path) && $route.path === '/calendar'"
       :date="currDate"/>

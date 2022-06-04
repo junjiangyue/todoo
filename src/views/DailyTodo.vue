@@ -22,6 +22,11 @@ export default {
                 this.ListIcon=new URL('../assets/icon/listmode-un.png', import.meta.url).href;
             }
             
+        },
+        getMission(missionID){
+            console.log('父组件收到的消息：'+missionID)
+        // 父组件传值
+            this.$emit("mission",missionID);
         }
     },
     mounted(){
@@ -33,7 +38,6 @@ export default {
 </script>
 <template>
 <div>
-
     <div class="shift">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :router="true">
             <el-menu-item index="/" @click="saveIndex('/')"><img :src="ListIcon" style="margin-right: 0.5em;" />清单模式</el-menu-item>
@@ -41,7 +45,7 @@ export default {
         </el-menu>
     </div>
     <div>
-        <router-view name="modeShift"></router-view>
+        <router-view name="modeShift" @mission="getMission"></router-view>
     </div>
 </div>
 </template>
