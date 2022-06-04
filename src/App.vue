@@ -29,7 +29,7 @@ const excludeTopLeft = ['/login']
     </section>
 
     <!--右侧边栏-->
-    <right-bar v-show="!excludeRightBar.includes($route.path)"/>
+    <right-bar v-if="!excludeRightBar.includes($route.path)"/>
     
   </article>
 </template>

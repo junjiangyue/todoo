@@ -33,7 +33,6 @@ export default {
 </script>
 <template>
 <div>
-
     <div class="shift">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :router="true">
             <el-menu-item index="/" @click="saveIndex('/')"><img :src="ListIcon" style="margin-right: 0.5em;" />清单模式</el-menu-item>
