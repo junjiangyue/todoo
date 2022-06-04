@@ -41,7 +41,7 @@ const tabItems = [
       activeTab.value = 'tomato'
     }
   },  
-    {
+  {
     key: 'weekly',
     title: 'Todo 周报',
     subtitle: 'Weekly Report',

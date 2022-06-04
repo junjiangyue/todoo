@@ -5,7 +5,7 @@ import LeftBar from './components/public/LeftBar.vue'
 import RightBar from './components/public/RightBar.vue'
 
 // 不显示右侧边栏的路由
-const excludeRightBar = ['/todo-asset', '/settings', '/login', '/statistic','/timetable']
+const excludeRightBar = ['/todo-asset', '/settings', '/login', '/statistic', '/TimeTable']
 // 不显示顶、左侧边栏的路由
 const excludeTopLeft = ['/login']
 </script>
@@ -38,6 +38,7 @@ const excludeTopLeft = ['/login']
 body {
   padding: 0;
   margin: 0;
+  font-family: 'PingFang SC'
 }
 </style>
 
