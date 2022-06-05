@@ -7,9 +7,9 @@ import TodoSider from './components/public/TodoSider.vue'
 import CalendarSider from './components/calendar/CalendarSider.vue'
 
 // 不显示右侧边栏的路由
-const excludeRightBar = ['/todo-asset', '/settings', '/login', '/statistic', '/TimeTable']
+const excludeRightBar = ['/todo-asset', '/settings', '/login', '/statistic', '/TimeTable','/register']
 // 不显示顶、左侧边栏的路由
-const excludeTopLeft = ['/login']
+const excludeTopLeft = ['/login','/register']
 
 // 选中日期
 const currDate = ref(new Date())

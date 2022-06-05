@@ -20,22 +20,26 @@ import { RouterLink } from 'vue-router'
           </div>
         </div>
         <div class = "mainRight">
-          <div class="loginForm">
+          <div class="registerForm">
             <el-form>
               <el-form-item>
-                <p class="loginWordSize">邮箱或手机号</p>
-                <el-input class="inputSize" placeholder="请输入你的邮箱或手机号"></el-input>
+                <p class="registerWordSize">注册邮箱</p>
+                <el-input class="inputSize" placeholder="请输入你的注册邮箱"></el-input>
               </el-form-item>
               <el-form-item>
-                <p class="loginWordSize">密码</p>
+                <p class="registerWordSize">注册手机号</p>
+                <el-input class="inputSize" placeholder="请输入你的注册手机号"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <p class="registerWordSize">密码</p>
                 <el-input class="inputSize" placeholder="请输入你的密码"></el-input>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" class="loginButton" @click="login">登录</el-button>
+                <el-button type="primary" class="registerButton">注册</el-button>
               </el-form-item>
             </el-form>
-            <div class="registerMsg">
-              <router-link to="/register">新用户注册</router-link>
+            <div class="returnMsg">
+              <router-link to="/login">返回登录</router-link>
             </div>
           </div>
         </div>
@@ -44,20 +48,6 @@ import { RouterLink } from 'vue-router'
   </div>
 </template>
 
-<script>
-
-export default {
-  name:"Login",
-
-  methods:{
-    login(){
-      this.$router.push('/')
-    }
-  }
-
-}
-
-</script>
 
 <style scoped>
 
@@ -136,28 +126,28 @@ a:hover {
   margin-left: 28%;
 }
 
-.loginForm{
+.registerForm{
   width: 360px;
   padding: 40px;
-  margin-top: 22%;
+  margin-top: 14%;
   margin-left: 25%;
 }
 
-.loginWordSize{
+.registerWordSize{
   font-size: 20px;
-  //margin: 0 0 20px;
+//margin: 0 0 20px;
   text-align: left;
   font-weight: bold;
 }
 
-.loginButton{
+.registerButton{
   width: 100%;
   margin-top: 10%;
   background-color: #306fe0;
   height: 40px;
 }
 
-.registerMsg{
+.returnMsg{
   text-align: center;
   font-size: 13px;
 }
