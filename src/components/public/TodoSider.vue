@@ -6,6 +6,11 @@ export default {
       today:'30',
       date:'2022年5月',
     }
+  },
+  methods:{
+    getTodoInfo(){
+      
+    }
   }
 }
 </script>>
@@ -25,8 +30,11 @@ export default {
       </div>
       <div>开启今天的日程吧！</div>
     </div>
-    <div v-if="msg!=-1">
+    <div v-if="msg!=-1" class="todoInfo">
       任务详情{{msg}}
+      <div>时间</div>
+      <div>任务标题</div>
+      <div>任务描述</div>
     </div>
   </section>
 </template>
@@ -47,5 +55,9 @@ export default {
 }
 .illu{
   margin-top: 5em;
+}
+.todoInfo{
+  text-align: left;
+  padding-left:15%;
 }
 </style>

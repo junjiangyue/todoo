@@ -439,8 +439,8 @@ export default {
 }
 .sub{
     border: 0;
-    height: 2.5em;
-    width: 37em;
+    height: 2.3em;
+    width: 100%;
 }
 :deep().el-dialog__body{
     padding-top: 0;
