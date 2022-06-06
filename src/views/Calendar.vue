@@ -1,14 +1,22 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
 import { NScrollbar } from 'naive-ui'
 import '@fullcalendar/core/vdom'
 import FullCalendar, { CalendarOptions, EventInput } from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import zhLocale from '@fullcalendar/core/locales/zh-cn'
+import axios from 'axios'
 
 const emits = defineEmits<{
   (e: 'click-date', date: Date): void
 }>()
+
+onMounted(() => {
+  axios.get(`/api/alltodo`, (res) => {
+    console.log(res.data)
+  })
+})
 
 // 日期，ISO字符串(0时区)，去掉'T'以后的部分
 const yesterdayStr = new Date((new Date()).getTime() - 24 * 60 * 60 * 1000).toISOString().replace(/T.*$/, '')
