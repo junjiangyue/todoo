@@ -10,5 +10,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  server: {
+    target: "http://localhost:3193/api",
+    changeOrigin: true,
+    rewrite: (path) => path.replace(/^\/api/, ""),    
   }
 })
