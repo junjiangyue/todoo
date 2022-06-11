@@ -4,7 +4,7 @@ import{ createConnection, type ConnectionConfig } from 'mysql'
 const host: string = '106.15.78.201'
 const pwd: string = '12345'
 
-const mysql_flea: ConnectionConfig = {
+const mysql_todoo: ConnectionConfig = {
   host: host,
   port: 3306,
   user: 'root',
@@ -16,7 +16,7 @@ const mysql_flea: ConnectionConfig = {
   charset: 'utf8mb4'
 }
 
-const connection = createConnection(mysql_flea)
+const connection = createConnection(mysql_todoo)
 connection.connect()
 
 export default connection

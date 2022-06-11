@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onBeforeMount } from 'vue'
 import { NScrollbar } from 'naive-ui'
 import '@fullcalendar/core/vdom'
 import FullCalendar, { CalendarOptions, EventInput } from '@fullcalendar/vue3'
@@ -12,9 +12,22 @@ const emits = defineEmits<{
   (e: 'click-date', date: Date): void
 }>()
 
-onMounted(() => {
-  axios.get(`/api/alltodo`, (res) => {
-    console.log(res.data)
+interface Todo {
+  priority: string
+  repetition: number
+  repetition_scope: string
+  scheme_date: string
+  scheme_description: string
+  scheme_id: number
+  scheme_start_time: string
+  state: string
+  tag_name: string
+}
+
+onBeforeMount(async () => {
+  const res = await axios.get(`/api/alltodo`)
+  res.data.forEach((todo: Todo) => {
+
   })
 })
 
