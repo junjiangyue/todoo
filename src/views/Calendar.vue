@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, ref } from 'vue'
 import { NScrollbar } from 'naive-ui'
 import '@fullcalendar/core/vdom'
 import FullCalendar, { CalendarOptions, EventInput } from '@fullcalendar/vue3'
@@ -12,26 +12,73 @@ const emits = defineEmits<{
   (e: 'click-date', date: Date): void
 }>()
 
-interface Todo {
+interface RawTodo {
+  scheme_id: number
+  scheme_title: string
+  scheme_date: string  
+  scheme_start_time: string
+  scheme_end_time: string  
   priority: string
   repetition: number
   repetition_scope: string
-  scheme_date: string
   scheme_description: string
-  scheme_id: number
-  scheme_start_time: string
   state: string
   tag_name: string
 }
 
+const todos = ref<EventInput[]>([])
+
+// 颜色别名
+const [ red, blue, yellow, purple, green ] = ['#B20000', '#0065C1', '#E5C100', '#E6EFFF', '#007505' ]
+
 onBeforeMount(async () => {
   const res = await axios.get(`/api/alltodo`)
-  res.data.forEach((todo: Todo) => {
-
+  res.data.forEach((todo: RawTodo) => {
+    todos.value.push(parseTodo(todo))
   })
 })
 
-// 日期，ISO字符串(0时区)，去掉'T'以后的部分
+type Todo = Partial<EventInput>
+
+// 解析数据库返回的todo为Calendar EventInput
+function parseTodo (todo: RawTodo) {
+  const result: Todo = {
+    id: String(todo.scheme_id),
+    title: todo.scheme_title
+  }
+
+  if (todo.scheme_date) {
+    result.start = todo.scheme_date
+  } else {
+    result.start = todo.scheme_start_time
+    result.end = todo.scheme_end_time
+  }
+
+  switch (todo.priority) {
+    case '1':
+      result.color = red
+      break
+    case '2':
+      result.color = blue
+      break
+    case '3':
+      result.color = yellow
+      break
+    case '4':
+      result.color = purple
+      break
+  }
+
+  if (todo.state === '1') {
+    result.color = green
+  }
+
+  console.log(result)
+
+  return result
+}
+
+/* // 日期，ISO字符串(0时区)，去掉'T'以后的部分
 const yesterdayStr = new Date((new Date()).getTime() - 24 * 60 * 60 * 1000).toISOString().replace(/T.*$/, '')
 
 const todayStr = new Date().toISOString().replace(/T.*$/, '')
@@ -79,7 +126,7 @@ const initialEvents: EventInput[] = [
     start: tommorrowStr,
     color: '#B20000'
   },
-]
+] */
 
 // 日历选项
 const calendarOptions: CalendarOptions = {
@@ -94,9 +141,9 @@ const calendarOptions: CalendarOptions = {
     end: 'next'
   },
   locale: zhLocale,
-  contentHeight: '56em',
-  fixedWeekCount: false,
-  initialEvents: initialEvents,
+  contentHeight: '64em',
+  fixedWeekCount: true,
+  initialEvents: todos.value,
   selectable: true,
   dateClick: (info) => {
     // 点击日期，切换右侧栏显示
@@ -109,6 +156,7 @@ const calendarOptions: CalendarOptions = {
   <n-scrollbar
     style="max-height: 40rem;">
     <full-calendar
+      v-if="todos.length > 0"
       style="margin-right: 1em;"
       :options="calendarOptions"/>
   </n-scrollbar>
@@ -124,6 +172,15 @@ $blue-deep: #004889;
   &:hover {
     background-color: $blue-deep;
   }
+}
+
+:deep(.fc-next-button:focus) {
+  outline: none;
+  box-shadow: none;
+}
+
+:deep(.fc-button-primary:focus) {
+  box-shadow: none;
 }
 
 :deep(.fc-col-header-cell-cushion) {
