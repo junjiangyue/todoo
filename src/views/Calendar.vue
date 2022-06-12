@@ -5,6 +5,7 @@ import '@fullcalendar/core/vdom'
 import FullCalendar, { CalendarOptions, EventInput } from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import rrulePlugin from '@fullcalendar/rrule'
 import zhLocale from '@fullcalendar/core/locales/zh-cn'
 import axios from 'axios'
 
@@ -18,11 +19,11 @@ interface RawTodo {
   scheme_date: string  
   scheme_start_time: string
   scheme_end_time: string  
-  priority: string
+  priority: '1' | '2' | '3' | '4'
   repetition: number
-  repetition_scope: string
+  repetition_scope: 'daily' | 'weekly' | 'monthly' | 'yearly'
   scheme_description: string
-  state: string
+  state: '0' | '1'
   tag_name: string
 }
 
@@ -51,7 +52,9 @@ function parseTodo (todo: RawTodo) {
     result.start = todo.scheme_date
   } else {
     result.start = todo.scheme_start_time
-    result.end = todo.scheme_end_time
+    if (todo.scheme_end_time) {
+      result.end = todo.scheme_end_time
+    }
   }
 
   switch (todo.priority) {
@@ -71,6 +74,12 @@ function parseTodo (todo: RawTodo) {
 
   if (todo.state === '1') {
     result.color = green
+  }
+
+  if (todo.repetition) {
+    result.rrule = {
+      freq: todo.repetition_scope,
+    }
   }
 
   console.log(result)
@@ -132,7 +141,8 @@ const initialEvents: EventInput[] = [
 const calendarOptions: CalendarOptions = {
   plugins: [
     dayGridPlugin,
-    interactionPlugin
+    interactionPlugin,
+    rrulePlugin
   ],
   initialView: 'dayGridMonth',
   headerToolbar: {
@@ -166,6 +176,10 @@ const calendarOptions: CalendarOptions = {
 $blue-shallow: #E6EFFF;
 $blue: #0065C1;
 $blue-deep: #004889;
+
+:deep(.fc-event-time) {
+  width: 2.4rem;
+}
 
 :deep(.fc-button) {
   background-color: $blue;

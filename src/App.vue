@@ -5,11 +5,14 @@ import TopNav from './components/public/TopNav.vue'
 import LeftBar from './components/public/LeftBar.vue'
 import TodoSider from './components/public/TodoSider.vue'
 import CalendarSider from './components/calendar/CalendarSider.vue'
+import TomatoNav from './components/public/TomatoNav.vue'
 
 // 不显示右侧边栏的路由
 const excludeRightBar = ['/todo-asset', '/settings/theme', '/login', '/statistic', '/TimeTable','/register','/settings/personalInformation']
 // 不显示顶、左侧边栏的路由
 const excludeTopLeft = ['/login','/register']
+// 不显示番茄钟底边栏的路由
+const excludeTomatoBar = ['/login', '/register', '/settings/theme', '/settings/personalInformation']
 
 // 选中日期
 const currDate = ref(new Date())
@@ -43,6 +46,9 @@ const missionID = ref();
           <component :is="Component" @click-date="handleClickDate" @mission="getMission"/>
         </keep-alive>
       </router-view>
+
+      <!--番茄钟栏-->
+      <tomato-nav v-if="!excludeTomatoBar.includes($route.path)"/>
     </section>
 
     <!--右侧边栏-->
@@ -80,6 +86,7 @@ body {
   flex-grow: 1;
   margin: .3em .4em;
   box-sizing: border-box;
+  position: relative;
 }
 
 .full-content {
