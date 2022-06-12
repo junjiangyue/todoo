@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview --port 5050"
+    "preview": "vite preview --port 5050",
+    "server": "ts-node ./server/app.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.0",
@@ -26,6 +27,7 @@
     "@vitejs/plugin-vue": "^2.3.1",
     "naive-ui": "^2.28.4",
     "sass": "^1.51.0",
+    "ts-node": "^10.8.1",
     "vite": "^2.9.5"
   }
 }

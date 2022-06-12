@@ -12,5 +12,5 @@ app
 const server = app.listen(3193, () => {
   const host = (server.address() as AddressInfo).address
   const port = (server.address() as AddressInfo).port
-  console.log(`Server is running at http://%s:%s`, host === ':' ? '127.0.0.1' : host, port)
+  console.log(`Server is running at http://%s:%s`, host === '::' ? '127.0.0.1' : host, port)
 })
