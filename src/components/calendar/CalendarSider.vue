@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { EventInput } from '@fullcalendar/vue3'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, toRef } from 'vue'
 
 const props = defineProps<{
   date: Date
 }>()
+
+const dateRef = toRef(props, 'date')
 
 // 星期
 const whichDay = computed(() => {
@@ -53,7 +55,7 @@ function getEvents () {
   ])
 }
 
-watch(props.date, getEvents)
+watch(dateRef, getEvents)
 
 </script>>
 

@@ -52,7 +52,20 @@ const router = createRouter({
     {
       path: '/settings',
       name: 'settings',
-      component: () => import('@/views/Settings.vue')
+      redirect: '/settings/theme',
+      children:[
+        {
+          path:'theme',
+          name:'Theme',
+          component:()=> import('../views/Theme.vue')
+        },
+        {
+          path:'personalInformation',
+          name:'PersonalInformation',
+          component:()=> import('../views/PersonalInformation.vue')
+        }
+      ],
+      component: () => import('../views/Settings.vue'),
     }
   ]
 })

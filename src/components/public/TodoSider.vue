@@ -52,7 +52,6 @@ export default {
   text-align: center;
 }
 .welcome{
-  color: #5B94F6;
   font-size:24px ;
 }
 .illu{
