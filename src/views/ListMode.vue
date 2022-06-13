@@ -1,5 +1,5 @@
 <script>
-
+import DatePicker from '@/components/public/DatePicker.vue';
 export default {
      data(){
         return{
@@ -10,23 +10,8 @@ export default {
                     courseName:"用户交互技术"
                 }
             ],
+            mission:"",
             todolist:[
-                {
-                    missionId:1,
-                    missionTime:"10:00 - 11:35",
-                    missionTitle:"写项目作业",
-                    missionPriority:"极高",
-                    missionState:1,
-                    missionLabel:"学习"
-                },
-                {
-                    missionId:2,
-                    missionTime:"10:00 - 11:35",
-                    missionTitle:"写项目作业",
-                    missionPriority:"极高",
-                    missionState:1,
-                    missionLabel:"学习"
-                }
             ],
             checklist:[
                 {
@@ -39,11 +24,12 @@ export default {
                 }
             ],
             today:'30',
-            yesterday:'29',
-            daybeforeyesterday:'28',
-            tomorrow:'31',
-            dayaftertomorrow:'1',
+            yesterday:'16',
+            daybeforeyesterday:'15',
+            tomorrow:'18',
+            dayaftertomorrow:'19',
             date:'',
+            req:'',
             activeNames:['1','2','3'],
             visible:false,
             formLabelWidth:'140px',
@@ -60,9 +46,16 @@ export default {
      methods:{
         getDate(){
             var d = new Date();
+            this.req = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+            console.log(d)
             this.date =(d.getMonth()+1).toString()+"月"+d.getDate().toString()+"日";
             console.log(d.getDate());
             this.today=d.getDate();
+            this.yesterday = this.today-1
+            this.daybeforeyesterday = this.today-2
+            this.tomorrow = this.today + 1
+            this.dayaftertomorrow = this.today+2
+
         },
         handleClose(done) {
             this.$confirm('确认关闭？')
@@ -81,11 +74,48 @@ export default {
         },
         godetail(missionId){
             this.$emit("mission",missionId);
-            //console.log(missionId)
+            //console.log(schemeId)
+        },
+        getscheme(){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                console.log(res)
+                if(res.data.status==-1){
+                    
+                }
+                else{
+            
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime='今天'
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                    }
+                }
+                this.todolist = res.data
+                }
+            })
+        },
+        gotoToday(){
+            this.today = this.today
+        },
+        gotoYesterday(){
+            this.today = this.yesterday
         }
     },
     mounted(){
         this.getDate()
+        this.getscheme()
+    },
+    components:{
+        DatePicker
     }
 }
 </script>
@@ -93,33 +123,34 @@ export default {
 <template>
 <div class="Listmode">
         <el-row>
-            <el-col :span="12">
+            <el-col :span="24">
             <div class="daypicker">
-                <el-row class="row">
+                <DatePicker></DatePicker>
+                <!-- <el-row class="row">
                     <el-col :span="4"><div>
                         <img src="@/assets/icon/leftarrow.png"/>
                     </div>
                     </el-col>
-                    <el-col :span="3"><div>{{daybeforeyesterday}}</div>
+                    <el-col :span="3" @click="gotoDaybeforeyesterday" ><div style="cursor:pointer">{{daybeforeyesterday}}</div>
                     </el-col>
-                    <el-col :span="3"><div>{{yesterday}}</div></el-col>
-                    <el-col :span="3"><div class="today">
-                        <div>{{today}}</div></div>
+                    <el-col :span="3" @click="gotoYesterday"><div  style="cursor:pointer">{{yesterday}}</div></el-col>
+                    <el-col :span="3" @click="gotoToday"><div class="today">
+                        <div  style="cursor:pointer">{{today}}</div></div>
                         </el-col>
-                    <el-col :span="3"><div>{{tomorrow}}</div></el-col>
-                    <el-col :span="3"><div>{{dayaftertomorrow}}</div></el-col>
+                    <el-col :span="3" @click="gotoTomorrow"><div  style="cursor:pointer">{{tomorrow}}</div></el-col>
+                    <el-col :span="3" @click="gotoDayaftertomorrow"><div style="cursor:pointer">{{dayaftertomorrow}}</div></el-col>
                     <el-col :span="5"><div>
                         <img src="@/assets/icon/rightarrow.png"/>
                     </div></el-col>
-                </el-row>
+                </el-row> -->
                 </div>
             </el-col>
-            <el-col :span="12" style="display:flex;align-items: center;">{{date}}，今天</el-col>
+            <!-- <el-col :span="12" style="display:flex;align-items: center;">{{date}}，今天</el-col> -->
         </el-row>
 
 
     <div class="demo-collapse">
-    <el-collapse v-model="activeNames" @change="handleChange">
+    <el-collapse v-model="activeNames" >
       <el-collapse-item  name="1" >
           <template #title >
           <div class="collapse-title">今日课程</div>
@@ -145,25 +176,25 @@ export default {
         </template>
         <div class="todo">
             <div class="input">
-                <el-input v-model="input4" placeholder="添加日程到今天"  @click="visible=true">
+                <el-input v-model="mission" placeholder="添加日程到今天"  @click="visible=true">
             <template #prefix>
             <el-icon :size="28"><CirclePlus /></el-icon>
             </template>
         </el-input>
             </div>
-            <div v-for="(mission) in todolist" :key = "mission.missionId">
-                <el-row class="mission" @click="godetail(mission.missionId)">
+            <div v-for="(scheme) in todolist" :key = "scheme.schemeId">
+                <el-row class="scheme" @click="godetail(scheme.schemeId)">
                     <el-col :span="1">
                     <el-checkbox v-model = "complete" size="large"/>
                     </el-col>
-                    <el-col :span="4">
-                        {{mission.missionTime}}
+                    <el-col :span="4" class="schemeTime">
+                        {{scheme.schemeStartTime}}
                     </el-col>
                     <el-col :span="10">
-                        {{mission.missionTitle}}
+                        {{scheme.schemeTitle}}
                     </el-col>
                     <el-col :span="4" class="label">
-                        {{mission.missionLabel}}
+                        {{scheme.tagName}}
                     </el-col>
                     <el-col :span="2">
                         ···
@@ -172,7 +203,7 @@ export default {
             </div>
         </div>
 
-       <el-dialog v-model="visible">
+       <el-dialog  v-model="visible"  :before-close="handleClose">
             <el-form :model="form" >
             <el-row>
                 <el-col :span="18">
@@ -192,7 +223,7 @@ export default {
                         <div class="line">
                         <img style="margin-left: 1em;" src="@/assets/icon/label.png"/>
                         <span style="font-size:14px;padding:5px;">标签</span>
-                        <el-radio-group v-model="form.label" size="medium">
+                        <el-radio-group v-model="form.label" size="default">
                             <el-radio-button label="学习" ></el-radio-button>
                             <el-radio-button label="生活"></el-radio-button>
                             <el-radio-button label="工作"></el-radio-button>
@@ -253,11 +284,11 @@ export default {
             </template>
         <div class="check">
                 <div class="checklist" v-for="(check) in checklist" :key = "check.checkId">
-                    <el-row class="mission">
+                    <el-row class="scheme">
                         <el-col :span="1">
                         <el-checkbox v-model = "complete" size="large"/>
                         </el-col>
-                        <el-col :span="4">
+                        <el-col :span="4" class="schemeTime">
                             {{check.checkTime}}
                         </el-col>
                         <el-col :span="10">
@@ -267,7 +298,22 @@ export default {
                             {{check.checkLabel}}
                         </el-col>
                         <el-col :span="2">
-                            ···
+                             <el-dropdown trigger="click">
+                                <span class="el-dropdown-link">
+                                <el-icon><MoreFilled /></el-icon>
+                                </span>
+                                <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :icon="Plus">Action 1</el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlusFilled">
+                                    Action 2
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlus">Action 3</el-dropdown-item>
+                                    <el-dropdown-item :icon="Check">Action 4</el-dropdown-item>
+                                    <el-dropdown-item :icon="CircleCheck">Action 5</el-dropdown-item>
+                                </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
                         </el-col>
                     </el-row>
                 </div>
@@ -285,16 +331,18 @@ export default {
     height: 4em;
     display: flex;
     align-items: center;
+    font-size: 14px;
 }
-.mission{
+.scheme{
     height: 48px;
     display: flex;
     align-items: center;
     margin-top: 10px;
     cursor: pointer;
     width: 98%;
+    font-size: 15px;
 }
-.mission:hover{
+.scheme:hover{
     background-color: #E5EFFF;
     transition: all 0.4s; 
 }
@@ -345,7 +393,7 @@ export default {
     background-color: #EDEDED;
     border-radius: 30px;
     height: 2.5em;
-    width: 22em;
+    width: 28em;
     text-align: center;
 }
 .row{
@@ -491,5 +539,8 @@ input:focus{
 }
 :deep().el-collapse-item__header{
     height: 1.7em;
+}
+.schemeTime{
+    color: #367BF5;
 }
 </style>

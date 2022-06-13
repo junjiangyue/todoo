@@ -3,20 +3,23 @@ export default {
   props:['msg'],
   data(){
     return{
-      today:'30',
-      date:'2022年5月',
+      today:'17',
+      date:'2022年6月',
+      startTime:'9:00',
+      endTime:'10:00',
+      missionDate:'今天',
     }
   },
   methods:{
-    getTodoInfo(){
-      
-    }
+    
+  },
+  mounted(){
+
   }
 }
 </script>>
 
 <template>
-<!-- 怎么样才能做到，不选中的时候显示这部分内容，选中的时候显示其他内容？ -->
   <section class="right-bar-wrapper">
     <div v-if="msg==-1||msg==null">
       <div class="illu">
@@ -30,11 +33,10 @@ export default {
       </div>
       <div>开启今天的日程吧！</div>
     </div>
-    <div v-if="msg!=-1" class="todoInfo">
-      任务详情{{msg}}
-      <div>时间</div>
-      <div>任务标题</div>
-      <div>任务描述</div>
+    <div v-if="msg!=-1&&msg!=null" class="todoInfo">
+      <div class="head"><el-checkbox v-model = "complete" size="large"/>{{missionDate}},{{startTime}}-{{endTime}}</div>
+      <div class="title">任务标题</div>
+      <div class="description">描述</div>
     </div>
   </section>
 </template>
@@ -58,6 +60,27 @@ export default {
 }
 .todoInfo{
   text-align: left;
-  padding-left:15%;
+  padding-left:0;
+}
+.head{
+  border-bottom: solid 1px #C6CACC;
+  padding-left: 5%;
+}
+.title{
+  font-size: 16px;
+  font-family: 'Abyssinica SIL';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.44px;
+  padding-top: 10px;
+  padding-left: 5%;
+}
+.description{
+  color: #9E9E9E;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 5%;
 }
 </style>

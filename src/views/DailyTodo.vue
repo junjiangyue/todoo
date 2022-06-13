@@ -2,7 +2,7 @@
 export default {
      data(){
         return{
-            index:'',
+            activeIndex:'/',
             ListIcon: new URL('../assets/icon/listmode.png', import.meta.url).href,
             TableIcon: new URL('../assets/icon/timetable-un.png', import.meta.url).href,
         }
