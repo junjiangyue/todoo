@@ -9,15 +9,15 @@
         <el-form>
           <el-form-item>
             <p class="WordSize">小时</p>
-            <el-input v-model.number="this.hourSet" class="inputSize" placeholder="请设置小时"></el-input>
+            <el-input v-model.number="this.hourSet" class="inputSize" placeholder="请设置小时，默认1小时30分钟"></el-input>
           </el-form-item>
           <el-form-item>
             <p class="WordSize">分钟</p>
-            <el-input v-model.number="this.minSet" class="inputSize" placeholder="请设置分钟"></el-input>
+            <el-input v-model.number="this.minSet" class="inputSize" placeholder="请设置分钟，默认1小时30分钟"></el-input>
           </el-form-item>
           <el-form-item>
             <p class="WordSize">秒</p>
-            <el-input v-model.number="this.secSet" class="inputSize" placeholder="请设置秒"></el-input>
+            <el-input v-model.number="this.secSet" class="inputSize" placeholder="请设置秒，默认1小时30分钟"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -31,15 +31,15 @@
         <el-form>
           <el-form-item>
             <p class="WordSize">小时</p>
-            <el-input v-model.number="this.restHour" class="inputSize" placeholder="请设置小时"></el-input>
+            <el-input v-model.number="this.restHour" class="inputSize" placeholder="请设置小时，默认5分钟"></el-input>
           </el-form-item>
           <el-form-item>
             <p class="WordSize">分钟</p>
-            <el-input v-model.number="this.restMin" class="inputSize" placeholder="请设置分钟"></el-input>
+            <el-input v-model.number="this.restMin" class="inputSize" placeholder="请设置分钟，默认5分钟"></el-input>
           </el-form-item>
           <el-form-item>
             <p class="WordSize">秒</p>
-            <el-input v-model.number="this.restSec" class="inputSize" placeholder="请设置秒"></el-input>
+            <el-input v-model.number="this.restSec" class="inputSize" placeholder="请设置秒，默认5分钟"></el-input>
           </el-form-item>
         </el-form>
       </div>
@@ -53,15 +53,15 @@
         <el-form>
           <el-form-item>
             <p class="WordSize">小时</p>
-            <el-input v-model.number="this.intervalHour" class="inputSize" placeholder="请设置小时"></el-input>
+            <el-input v-model.number="this.intervalHour" class="inputSize" placeholder="请设置小时，默认25分钟"></el-input>
           </el-form-item>
           <el-form-item>
             <p class="WordSize">分钟</p>
-            <el-input v-model.number="this.intervalMin" class="inputSize" placeholder="请设置分钟"></el-input>
+            <el-input v-model.number="this.intervalMin" class="inputSize" placeholder="请设置分钟，默认25分钟"></el-input>
           </el-form-item>
           <el-form-item>
             <p class="WordSize">秒</p>
-            <el-input v-model.number="this.intervalSec" class="inputSize" placeholder="请设置秒"></el-input>
+            <el-input v-model.number="this.intervalSec" class="inputSize" placeholder="请设置秒，默认25分钟"></el-input>
           </el-form-item>
         </el-form>
       </div>
