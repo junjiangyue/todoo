@@ -63,6 +63,11 @@ const router = createRouter({
           path:'personalInformation',
           name:'PersonalInformation',
           component:()=> import('../views/PersonalInformation.vue')
+        },
+        {
+          path:'tomatoSet',
+          name:'SetTomato',
+          component:()=>import('../views/SetTomato.vue')
         }
       ],
       component: () => import('../views/Settings.vue'),
