@@ -11,6 +11,9 @@
         <el-menu-item index="/settings/personalInformation">
           <span slot="title">个人信息</span>
         </el-menu-item>
+        <el-menu-item index="/settings/tomatoSet">
+          <span slot="title">番茄钟设置</span>
+        </el-menu-item>
       </el-menu>
   </div>
   <div>
