@@ -108,12 +108,43 @@ export default {
         },
         gotoYesterday(){
             this.today = this.yesterday
-        }
+        },
+        getChildMsg(day){
+            //console.log(day)
+            day = day.substring(0,4)+'/'+day.substring(5,6) +'/'+ day.substring(7,9)
+            console.log(day)
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:day
+                }
+            }).then(res=>{
+                console.log(res)
+                if(res.data.status==-1){
+                    
+                }
+                else{
+            
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime=day
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                    }
+                }
+                this.todolist = res.data
+                }
+            })
+        },
     },
     mounted(){
         this.getDate()
         this.getscheme()
     },
+    
     components:{
         DatePicker
     }
@@ -125,7 +156,7 @@ export default {
         <el-row>
             <el-col :span="24">
             <div class="daypicker">
-                <DatePicker></DatePicker>
+                <DatePicker @day="getChildMsg" ></DatePicker>
                 <!-- <el-row class="row">
                     <el-col :span="4"><div>
                         <img src="@/assets/icon/leftarrow.png"/>
