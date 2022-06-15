@@ -1,6 +1,6 @@
 <template>
     <div class="course-table">
-        <el-scrollbar style="height: 100%">
+        <n-scrollbar style="max-height: 470px">
             <div class="course-table-content">
                 <div class="top" :style="{ width: courseWidth * weekTable.length + 'px' }">
                     <div v-for="item in weekTable" class="top-text" :style="{ width: courseWidth + 'px' }">{{ item }}
@@ -43,40 +43,913 @@
 
                         </div>
                     </div>
+                    <!--空课程-->
+                     <div v-for="(item, index) in emptyCourse" >
+                        <div class="empty-kcb-item"
+                            @click="addTodo" :style="{
+                                marginLeft: (item.day - 1) * courseWidth +14+ 'px',
+                                
+                                marginTop: (item.period - 1) * 100 + 'px',
+                                width: courseWidth-20 + 'px',
+                                height: item.length * 100 + 'px',
+                                backgroundColor: '#FFFFFF'
+                            }">
+                            <div class="small-text">
+                                <text class="name">{{item.name}}</text>
+                                           <text class="teacher">{{item.teacher}}</text>
+                                <div class="position">
+                     
+                               
+                                  <text class="building">{{item.building}}</text>
+                                  <text class="room">{{item.room}}</text>
+                               
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
                    
                 </div>
-            </div>
-        </el-scrollbar>
-
-     
-        <el-dialog title="课程信息" :visible.sync="showUsualCourseDialog" width="30%" center>
-            <div class="dialog-content">
-                <div v-if="typeof (selectedCourse) != 'undefined'">
-                    <div>课程名称： {{ selectedCourse.name }}</div>
-                    <div>上课时间： {{ selectedCourse.week + ' ' +
-                            '第' + selectedCourse.period +
-                            '-' + (Number(selectedCourse.period) + Number(selectedCourse.length) - 1) + '节'
-                    }}</div>
-                    <div>上课教师： {{ selectedCourse.teacher }}</div>
-                    <div>上课地点： {{ selectedCourse.room }}</div>
-                </div>
-                <div v-else class="tip">本学期没有课哦</div>
-            </div>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="showUsualCourseDialog = false">确 定</el-button>
+                <el-dialog  v-model="visible"  :before-close="handleClose">
+            <el-form :model="form" >
+            <el-row>
+                <el-col :span="18">
+                    <el-form-item>
+                        <input class="name" v-model="form.name" autocomplete="off" @keyup.enter="add"  placeholder="    准备做什么？"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <input  class="describe" v-model="form.describe" autocomplete="off" placeholder="    添加描述"/>
+                    </el-form-item>
+                    <el-form-item>
+                        <div class="line">
+                        <img style="margin-left: 1em;" src="@/assets/icon/sub.png"/>
+                        <input class="sub" v-model="form.sub" autocomplete="off" placeholder="    添加子任务"/>
+                        </div>
+                    </el-form-item>
+                    <el-form-item >
+                        <div class="line">
+                        <img style="margin-left: 1em;" src="@/assets/icon/label.png"/>
+                        <span style="font-size:14px;padding:5px;">标签</span>
+                        <el-radio-group v-model="form.label" size="default">
+                            <el-radio-button label="学习" ></el-radio-button>
+                            <el-radio-button label="生活"></el-radio-button>
+                            <el-radio-button label="工作"></el-radio-button>
+                            <el-radio-button label="休闲"></el-radio-button>
+                        </el-radio-group>
+                        </div>
+                    </el-form-item>
+                    <el-form-item>
+                         <div class="line">
+                            <img style="margin-left: 1em;" src="@/assets/icon/priority.png"/>
+                            <span style="font-size:14px;padding:5px;">重要程度</span>
+                            <el-select v-model="form.priority" placeholder="不重要不紧急">
+                            <el-option label="重要且紧急" value="1" />
+                            <el-option label="重要不紧急" value="2" />
+                            <el-option label="不重要紧急" value="3" />
+                            <el-option label="不重要不紧急" value="4" />
+                            </el-select>
+                        </div>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="6" style="background-color:#EDEDED;border-radius: 0px 10px 0px 0px;border-left: solid 1px #E3E5E5;">
+                    <div class="time">
+                    <div><el-button class="thisday" autofocus="true" @click="form.date1=date">{{date}}/今天</el-button></div>
+                    <div><el-button class="thisday"  @click="form.date1=date">{{date}}/明天</el-button></div>
+                    <div><el-button class="thisday">没有日期</el-button></div>
+                    <div>
+                        <el-dropdown trigger="click">
+                            <span class="el-dropdown-link">
+                            选择时间段<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                            </span>
+                            <template #dropdown>
+                                <div class="block">
+                                    <el-date-picker
+                                    v-model="form.date1"
+                                    type="datetimerange"
+                                    range-separator="To"
+                                    start-placeholder="开始时间"
+                                    end-placeholder="结束时间"/>
+                                </div>
+                            </template>
+                        </el-dropdown>
+                    </div>
+                    </div>
+                </el-col>
+            </el-row>
+            </el-form>
+            <template #footer>
+            <span class="dialog-footer">
+                <el-button style="border-radius: 10px;" @click="visible = false">取消</el-button>
+                <el-button style="border-radius: 10px;background-color: #367BF5;color: #fff;" @click="add">确定</el-button>
             </span>
+            </template>
         </el-dialog>
+            </div>
+
+        </n-scrollbar>
+
     </div>
 </template>
  
 <script>
+import { NScrollbar } from 'naive-ui'
 export default {
     name: "CourseTable",
+    components:{
+        NScrollbar
+    },
     data() {
         return {
+            visible:false,
             showUsualCourseDialog: false,
             showPracticeCourseDialog: false,
-            selectedCourseIndex: 0
+            selectedCourseIndex: 0,
+            emptyCourse:[
+               {
+                    day:"1",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"1",
+                    length:"1",
+                    name:"",
+                    period:"8",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"1",
+                    length:"1",
+                    name:"",
+                    period:"9",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"1",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"1",
+                    length:"1",
+                    name:"",
+                    period:"13",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"1",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"1",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"2",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"6",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"7",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"8",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"9",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"11",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"12",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"13",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"2",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"3",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"4",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"11",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"12",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"13",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"3",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"3",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"4",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"6",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"7",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"4",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"1",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"6",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"7",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"8",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"9",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"11",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"12",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"13",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"5",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"1",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"2",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"3",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"4",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"6",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"7",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"8",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"9",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"11",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"12",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"13",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"6",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"1",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"2",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"3",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"4",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"5",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },
+                {
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"6",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"7",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"8",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"9",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"10",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"11",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"12",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"13",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                },{
+                    day:"7",
+                    length:"1",
+                    name:"",
+                    period:"14",
+                     building: "",
+                    room: "",
+                    teacher: "",
+                    type: "一般课",
+                    week: "1-17周",
+                }
+            ]
         }
     },
     props: {
@@ -235,6 +1108,7 @@ export default {
                     week: "1-17周",
 
                 },
+                
 
 
 
@@ -292,7 +1166,9 @@ export default {
 
     },
     methods: {
-
+        addTodo(){
+            
+        },
     }
 }
 </script>
@@ -362,6 +1238,15 @@ margin-top: 10px;
 
 
 .kcb-item {
+    position: absolute;
+    height: 100px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    margin-right:10px;
+}
+.empty-kcb-item{
     position: absolute;
     height: 100px;
     justify-content: center;
