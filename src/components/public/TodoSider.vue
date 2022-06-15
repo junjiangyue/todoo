@@ -8,10 +8,31 @@ export default {
       startTime:'9:00',
       endTime:'10:00',
       missionDate:'今天',
+      schemeStartTime:'',
+      schemeEndTime:'',
+      schemeTitle:'',
+      schemeDescription:'',
+      priority:'',
     }
   },
   methods:{
-    
+    getMission(){
+      this.$axios({
+        method:"get",
+        url:"http://localhost:8080/mission/getMission",
+        params:{
+          req:this.msg,
+        }
+      }).then(res=>{
+        console.log(res)
+        this.schemeStartTime = res.data.schemeStartTime
+        this.schemeEndTime = res.data.schemeEndTime
+        this.schemeTitle = res.data.schemeTitle
+        if(res.data.schemeDate!=null)this.missionDate=res.data.schemeDate
+        this.schemeDescription = res.data.schemeDescription
+        this.priority = res.data.priority
+      })
+    }
   },
   mounted(){
 
@@ -33,10 +54,9 @@ export default {
       </div>
       <div>开启今天的日程吧！</div>
     </div>
-    <div v-if="msg!=-1&&msg!=null" class="todoInfo">
-      <div class="head"><el-checkbox v-model = "complete" size="large"/>{{missionDate}},{{startTime}}-{{endTime}}</div>
-      <div class="title">任务标题</div>
-      <div class="description">描述</div>
+    <div v-if="msg!=-1&&msg!=null" class="todoInfo" :key="getMission()">
+      <div class="head"><el-checkbox v-model = "complete" size="large"/>{{schemeTitle}}</div>
+      <div class="description">{{schemeDescription}}</div>
     </div>
   </section>
 </template>

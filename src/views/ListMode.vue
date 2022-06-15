@@ -29,6 +29,7 @@ export default {
             tomorrow:'18',
             dayaftertomorrow:'19',
             date:'',
+            tomorrowdate:'',
             req:'',
             activeNames:['1','2','3'],
             visible:false,
@@ -40,7 +41,11 @@ export default {
                 priority: '',
                 label:'',
                 date1: '',
-                date2: '',}
+                date2: '',
+                date:'2022/6/17',
+                time1:'',
+                time2:''
+                }
         }
     },
      methods:{
@@ -49,6 +54,7 @@ export default {
             this.req = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
             console.log(d)
             this.date =(d.getMonth()+1).toString()+"月"+d.getDate().toString()+"日";
+            this.tomorrowdate =(d.getMonth()+1).toString()+"月"+(d.getDate()+1).toString()+"日";
             console.log(d.getDate());
             this.today=d.getDate();
             this.yesterday = this.today-1
@@ -67,7 +73,39 @@ export default {
         add(){
             console.log(this.form);
             this.visible = false;
-            // 上传到后端
+            console.log(this.form.date1)
+            console.log(this.form.date1[0])
+            console.log(this.form.date1[1])
+            var d=this.form.date
+            var date = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+            if(this.form.date1!='')
+            {
+                var d=this.form.date1[0]
+                var start = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+                var e=this.form.date1[1]
+                var end = e.getFullYear().toString()+'/'+(e.getMonth()+1).toString()+'/'+e.getDate().toString()
+            }else{
+                var start
+                var end
+            }
+            this.$axios({
+                method:"post",
+                url:"http://localhost:8080/mission/addMission",
+                params:{
+                    scheme_title:this.form.name,
+                    scheme_description:this.form.describe,
+                    scheme_start_time:start,
+                    scheme_end_time:end,
+                    scheme_date:date,
+                    priority:this.form.priority,
+                    state:'0',
+                    tag_name:this.form.tag_name,
+                    user_id:2,
+                    repetition:0
+                }
+            }).then(res=>{
+                console.log(res)
+            })
 
             // 从后端重新获取用户当天的任务列表
 
@@ -128,7 +166,8 @@ export default {
             
                 for(var i=0;i<res.data.length;i++){
                     if(res.data[i].schemeStartTime == null){
-                        res.data[i].schemeStartTime=day
+                        if(day==this.req) res.data[i].schemeStartTime='今天'
+                        else res.data[i].schemeStartTime=day
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
@@ -139,6 +178,19 @@ export default {
                 }
             })
         },
+        changeTitle(id,changedtitle){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionTitle",
+                params:{
+                    title:changedtitle,
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                this.$forceUpdate();
+                })
+        }
     },
     mounted(){
         this.getDate()
@@ -222,13 +274,34 @@ export default {
                         {{scheme.schemeStartTime}}
                     </el-col>
                     <el-col :span="10">
-                        {{scheme.schemeTitle}}
+                        <input class="input" v-model="scheme.schemeTitle" @change="changeTitle(scheme.schemeId,scheme.schemeTitle)"/>
+                        <el-tooltip content="重要且紧急" placement="right" effect="light" class="important"><el-icon v-if="scheme.priority==1" color="#EA3D2F"><Flag /></el-icon></el-tooltip>
+                        <el-tooltip content="重要不紧急" placement="right" effect="light" class="important"><el-icon v-if="scheme.priority==2" color="#F3AA18"><Flag /></el-icon></el-tooltip>
+                        <el-tooltip content="不重要紧急" placement="right" effect="light" class="important"><el-icon v-if="scheme.priority==3" color="#2FA84F"><Flag /></el-icon></el-tooltip>
                     </el-col>
                     <el-col :span="4" class="label">
-                        {{scheme.tagName}}
+                        <el-tag v-if="scheme.tagName=='学习'">{{scheme.tagName}}</el-tag>
+                        <el-tag type="success" v-if="scheme.tagName=='代码'||scheme.tagName=='软测'">{{scheme.tagName}}</el-tag>
                     </el-col>
                     <el-col :span="2">
-                        ···
+                         <el-dropdown trigger="click">
+                                <span class="el-dropdown-link">
+                                <el-icon><MoreFilled /></el-icon>
+                                </span>
+                                <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :icon="Plus">修改时间
+                                    
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlusFilled">
+                                    重要程度
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlus">置顶</el-dropdown-item>
+                                    <el-dropdown-item :icon="Check">修改标签</el-dropdown-item>
+                                    <el-dropdown-item :icon="CircleCheck">删除</el-dropdown-item>
+                                </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
                     </el-col>
                 </el-row>
             </div>
@@ -244,12 +317,12 @@ export default {
                     <el-form-item>
                         <input  class="describe" v-model="form.describe" autocomplete="off" placeholder="    添加描述"/>
                     </el-form-item>
-                    <el-form-item>
+                    <!-- <el-form-item>
                         <div class="line">
                         <img style="margin-left: 1em;" src="@/assets/icon/sub.png"/>
                         <input class="sub" v-model="form.sub" autocomplete="off" placeholder="    添加子任务"/>
                         </div>
-                    </el-form-item>
+                    </el-form-item> -->
                     <el-form-item >
                         <div class="line">
                         <img style="margin-left: 1em;" src="@/assets/icon/label.png"/>
@@ -267,36 +340,58 @@ export default {
                             <img style="margin-left: 1em;" src="@/assets/icon/priority.png"/>
                             <span style="font-size:14px;padding:5px;">重要程度</span>
                             <el-select v-model="form.priority" placeholder="不重要不紧急">
-                            <el-option label="重要且紧急" value="1" />
-                            <el-option label="重要不紧急" value="2" />
-                            <el-option label="不重要紧急" value="3" />
+                            <el-option style="color: #EA3D2F;" label="重要且紧急" value="1" />
+                            <el-option style="color: #F3AA18;" label="重要不紧急" value="2" />
+                            <el-option style="color: #2FA84F;" label="不重要紧急" value="3" />
                             <el-option label="不重要不紧急" value="4" />
                             </el-select>
                         </div>
                     </el-form-item>
                 </el-col>
-                <el-col :span="6" style="background-color:#EDEDED;border-radius: 0px 10px 0px 0px;border-left: solid 1px #E3E5E5;">
+                <el-col :span="6" style="background-color:#fff;border-radius: 0px 10px 0px 0px;border-left: solid 1px #E3E5E5;">
                     <div class="time">
-                    <div><el-button class="thisday" autofocus="true" @click="form.date1=date">{{date}}/今天</el-button></div>
-                    <div><el-button class="thisday"  @click="form.date1=date">{{date}}/明天</el-button></div>
-                    <div><el-button class="thisday">没有日期</el-button></div>
-                    <div>
-                        <el-dropdown trigger="click">
-                            <span class="el-dropdown-link">
-                            选择时间段<el-icon class="el-icon--right"><arrow-down /></el-icon>
-                            </span>
-                            <template #dropdown>
-                                <div class="block">
-                                    <el-date-picker
-                                    v-model="form.date1"
-                                    type="datetimerange"
-                                    range-separator="To"
-                                    start-placeholder="开始时间"
-                                    end-placeholder="结束时间"/>
-                                </div>
-                            </template>
-                        </el-dropdown>
-                    </div>
+                        <div style="margin-bottom:10px">
+                        <el-date-picker
+                                v-model="form.date"
+                                type="date"
+                                placeholder="今天">
+                            </el-date-picker>
+                        </div>
+                        <div style="margin-bottom:10px">
+                        <el-time-picker
+                            v-model="form.time1"
+                            :picker-options="{
+                            selectableRange: '18:30:00 - 20:30:00'
+                            }"
+                            placeholder="开始时间">
+                        </el-time-picker>
+                        </div>
+                        <div style="margin-bottom:10px">
+                        <el-time-picker
+                            v-model="form.time2"
+                            :picker-options="{
+                            selectableRange: '18:30:00 - 20:30:00'
+                            }"
+                            placeholder="结束时间">
+                        </el-time-picker>
+                        </div>
+                        <div >
+                            <el-dropdown trigger="click">
+                                <span class="el-dropdown-link">
+                                <el-button class="thisday">长期任务<el-icon class="el-icon--right"><arrow-down /></el-icon></el-button>
+                                </span>
+                                <template #dropdown>
+                                    <div class="block">
+                                        <el-date-picker
+                                        v-model="form.date1"
+                                        type="datetimerange"
+                                        range-separator="To"
+                                        start-placeholder="开始时间"
+                                        end-placeholder="结束时间"/>
+                                    </div>
+                                </template>
+                            </el-dropdown>
+                        </div>
                     </div>
                 </el-col>
             </el-row>
@@ -372,6 +467,7 @@ export default {
     cursor: pointer;
     width: 98%;
     font-size: 15px;
+    border-bottom: #e8e8e8 solid 0.5px;
 }
 .scheme:hover{
     background-color: #E5EFFF;
@@ -453,7 +549,7 @@ export default {
 .today{
     background-color: #367BF5;
     color: #fff;
-    border-radius: 100px;
+    border-radius: 10px;
     width: 1.6em;
     height: 2em;
     display: flex;
@@ -463,7 +559,7 @@ export default {
 }
 :deep().el-collapse-item__header {
     font-weight: 400;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 24px;
     /* or 150% */
 
@@ -562,16 +658,26 @@ input:focus{
     padding: 3px 10px;
     margin-top: 3em;
     margin-bottom: 3em;
-    width: 20em;
 }
 .thisday{
     border-radius: 10px;
     margin-bottom: 1em;
+    width: 150px;
+    background-color: #E0E0E0;
+    color: rgb(129, 127, 127);
 }
 :deep().el-collapse-item__header{
     height: 1.7em;
 }
 .schemeTime{
     color: #367BF5;
+}
+:deep().el-date-editor {
+    --el-date-editor-width: 150px;
+
+}
+.input{
+    border: 0;
+    BACKGROUND-COLOR: transparent;
 }
 </style>
