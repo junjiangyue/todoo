@@ -9,32 +9,42 @@ import { StopCircleSharp } from '@vicons/ionicons5'
 
 <template>
   <footer class="footer-wrapper">
-    <div class="contentStyle">
-      <div>
-        <img class="imgStyle" src="src/assets/illustration/tomatoImg.jpg"/>
+    <img
+      class="imgStyle"
+      src="src/assets/illustration/tomatoImg.jpg"/>
+
+    <div class="timeStyle">
+      <div class="top-message">
+        <span v-show="studyTag">{{hourSet}} : {{minSet}} : {{secondSet}}</span>
+        <span v-show="restTag">{{restHour}} : {{restSet}} : {{restSecShow}}</span>
       </div>
-      <div class="timeStyle">
-        <p v-show="studyTag">{{hourSet}} : {{minSet}} : {{secondSet}}</p>
-        <p v-show="restTag">{{restHour}} : {{restSet}} : {{restSecShow}}</p>
-        <p style="font-size: 20px;" v-show="textTagAfter">专注中···</p>
-        <p style="font-size: 20px;" v-show="textTagBefore">开始专注学习吧！</p>
-        <p style="font-size: 20px;" v-show="textTagPause">快来继续学习吧！</p>
-        <p style="font-size: 20px;" v-show="restTag">先休息休息吧！</p>
-      </div>
-      <div>
-        <n-icon class="imgRightStyle">
-          <play-circle-sharp class="imgStyle2" style="margin-right: 1%" v-show="startTag" @click="start()"></play-circle-sharp>
-          <pause-circle-sharp class="imgStyle2" style="margin-right: 1%" v-show="pauseTag" @click="stop()"></pause-circle-sharp>
-          <stop-circle-sharp class="imgStyle2" style="margin-right: 1%" v-show="stopTag" @click="reSet()"></stop-circle-sharp>
-          <play-circle-sharp class="imgStyle2" style="margin-right: 1%" v-show="restActionStartTag" @click="rest()"></play-circle-sharp>
-          <stop-circle-sharp class="imgStyle2" style="margin-right: 1%" v-show="restActionStopTag" @click="stopRest()"></stop-circle-sharp>
-        </n-icon>
-<!--        <img class="imgStyle2" style="margin-right: 1%" v-show="startTag" @click="start()" src="src/assets/icon/start.png"/>
-        <img class="imgStyle2" style="margin-right: 1%" v-show="pauseTag" @click="stop()" src="src/assets/icon/pauseButton.png"/>
-        <img class="imgStyle2" style="margin-right: 1%" v-show="stopTag" @click="reSet()" src="src/assets/icon/stop.png"/>-->
+      <div class="bottom-message">
+        <span v-show="textTagAfter">专注中···</span>
+        <span v-show="textTagBefore">开始专注学习吧！</span>
+        <span v-show="textTagPause">快来继续学习吧！</span>
+        <span v-show="restTag">先休息休息吧！</span>
       </div>
     </div>
-    
+    <div class="button-wrapper">
+      <n-icon :size="60" color="#EA3D2F" v-if="startTag" @click="start()">
+        <play-circle-sharp />
+      </n-icon>
+      <n-icon :size="60" color="#EA3D2F" v-if="pauseTag" @click="stop()">
+        <pause-circle-sharp/>
+      </n-icon>
+      <n-icon :size="60" color="#EA3D2F" v-if="stopTag" @click="reSet()">
+        <stop-circle-sharp/>
+      </n-icon>
+      <n-icon :size="60" color="#EA3D2F" v-if="restActionStartTag" @click="rest()">
+        <play-circle-sharp/>
+      </n-icon>
+      <n-icon :size="60" color="#EA3D2F" v-if="restActionStopTag" @click="stopRest()">
+        <stop-circle-sharp/>
+      </n-icon>
+    </div>
+<!--        <img class="imgStyle2" style="margin-right: 1%" v-show="startTag" @click="start()" src="src/assets/icon/start.png"/>
+      <img class="imgStyle2" style="margin-right: 1%" v-show="pauseTag" @click="stop()" src="src/assets/icon/pauseButton.png"/>
+      <img class="imgStyle2" style="margin-right: 1%" v-show="stopTag" @click="reSet()" src="src/assets/icon/stop.png"/>-->
   </footer>
 </template>
 
@@ -280,22 +290,48 @@ import { StopCircleSharp } from '@vicons/ionicons5'
 <style scoped lang="scss">
 $bg: #F6F1D7;
 
-.imgStyle{
-  width: 8em;
-  height: 8em;
+.footer-wrapper {
+  box-sizing: border-box;
+  position: absolute;
+  background-color: $bg;
+  bottom: -.3rem;
+  left: -.4rem;
+  right: -.4rem;
+  height: 8rem;
+  display: flex;
+  justify-content: space-around;
+  z-index: 99;
 }
 
-.imgRightStyle{
-  margin-left: 20em;
-  width: fit-content;
-  height: fit-content;
+.imgStyle {
+  width: 8rem;
+  height: 8rem;
+}
+
+.timeStyle{
+  font-size: 1.875rem;
   display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #EA3D2F;
+  font-family: "PingFang SC", cursive;
+}
+
+.bottom-message {
+  font-size: 1.25rem;
+}
+
+.button-wrapper {
+  width: 33%;
+  display: flex;
+  gap: 1%;
+  align-items: center;
+  justify-content: space-evenly;  
 }
 
 .imgStyle2{
   width: 5em;
   height: 5em;
-  margin-top: 2em;
   color: #EA3D2F;
 }
 
@@ -313,28 +349,4 @@ $bg: #F6F1D7;
   color: #EA3D2F;
 }*/
 
-.footer-wrapper {
-  box-sizing: border-box;
-  position: absolute;
-  background-color: $bg;
-  bottom: -.3rem;
-  left: -.4rem;
-  right: -.4rem;
-  /*height: 4rem;*/
-  z-index: 10;
-  height: fit-content;
-}
-
-.contentStyle{
-  display: flex;
-}
-
-.timeStyle{
-  font-size: 30px;
-  margin-left: 30%;
-  color: #EA3D2F;
-  text-align: center;
-  font-family: "PingFang SC",cursive;
-}
-
-</style>
+</style> 
