@@ -39,6 +39,10 @@ import defaultTheme from'../assets/illustration/default.png'
 import nightTheme from'../assets/illustration/night.png'
 import springTheme from'../assets/illustration/spring.png'
 import summerTheme from'../assets/illustration/summer.png'
+import { useDark, useToggle } from '@vueuse/core'
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
 
 export default {
   data() {
@@ -70,6 +74,8 @@ export default {
   },
   methods: {
     addClassColor:function(index){
+      toggleDark()
+
       this.currentColor=index;
       this.currentSeason=-1;
       console.log(this.current);

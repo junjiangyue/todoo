@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { EventInput } from '@fullcalendar/vue3'
 import { ref, watch, computed, toRef } from 'vue'
+import { NScrollbar } from 'naive-ui'
 
 const props = defineProps<{
   date: Date
@@ -64,6 +65,13 @@ watch(dateRef, getEvents)
     <div class="date-title">
       {{`${props.date.toLocaleDateString()} (${whichDay})`}}
     </div>
+    <n-scrollbar
+      class="events-container"
+      style="max-height: 36rem;">
+      <div v-for="event in events">
+
+      </div>
+    </n-scrollbar>
   </section>
 </template>
 
@@ -82,5 +90,11 @@ watch(dateRef, getEvents)
   font-family: 'PingFang SC';
   font-size: 1.5rem;
   letter-spacing: 0.44px;
+}
+
+.events-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 </style>

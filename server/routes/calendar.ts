@@ -38,6 +38,12 @@ app.get('/alltodo', (req, res) => {
   )
 })
 
+app.get('/datetodo/:date', (req, res) => {
+  connection.query(
+    `select * from scheme where scheme_date=? or (scheme)`
+  )
+})
+
 interface RawTodo {
   scheme_title: string
   scheme_date: string  
