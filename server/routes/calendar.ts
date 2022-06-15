@@ -38,6 +38,19 @@ app.get('/alltodo', (req, res) => {
   )
 })
 
+app.get('/datetodo/:date', (req, res) => {
+  connection.query(
+    `SELECT * FROM scheme 
+    WHERE scheme_start_time < CAST("${req.params.date}" AS DATETIME) 
+    AND scheme_end_time >CAST("${req.params.date}" AS DATETIME) 
+    OR scheme_date = CAST("${req.params.date}" AS DATETIME)`,
+    (err, result) => {
+      if (err) throw err
+      res.end(JSON.stringify(JSON.parse(JSON.stringify(result))))
+    }
+  )
+})
+
 interface RawTodo {
   scheme_title: string
   scheme_date: string  
