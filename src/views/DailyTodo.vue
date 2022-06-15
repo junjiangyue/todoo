@@ -40,11 +40,11 @@ export default {
 <div>
     <div class="shift">
         <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" :router="true">
-            <el-menu-item index="/" @click="saveIndex('/')"><img :src="ListIcon" style="margin-right: 0.5em;" />清单模式</el-menu-item>
-            <el-menu-item index="/TimeTable"  ><img :src="TableIcon" style="margin-right: 0.5em;"/>课表模式</el-menu-item>
+            <el-menu-item  class="el-menu-demo" index="/" @click="saveIndex('/')"><img :src="ListIcon" style="margin-right: 0.5em;" />清单模式</el-menu-item>
+            <el-menu-item class="el-menu-demo" index="/TimeTable" @click="saveIndex('/TimeTable')" ><img :src="TableIcon" style="margin-right: 0.5em;"/>课表模式</el-menu-item>
         </el-menu>
     </div>
-    <div>
+    <div class="content">
         <router-view name="modeShift" @mission="getMission"></router-view>
     </div>
 </div>
@@ -60,5 +60,11 @@ export default {
 a{
   text-decoration: none;
   color: #000;
+}
+.el-menu-demo{
+    font-size: 16px;
+}
+.content{
+    background-color: #fff;
 }
 </style>

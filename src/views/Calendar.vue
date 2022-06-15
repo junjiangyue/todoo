@@ -5,8 +5,8 @@ import '@fullcalendar/core/vdom'
 import FullCalendar, { CalendarOptions, EventInput } from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import rrulePlugin from '@fullcalendar/rrule'
 import zhLocale from '@fullcalendar/core/locales/zh-cn'
+import rrulePlugin from '@fullcalendar/rrule'
 import axios from 'axios'
 
 const emits = defineEmits<{

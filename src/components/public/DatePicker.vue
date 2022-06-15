@@ -38,7 +38,7 @@
     },
     watch: {
       currentIndex(val) {
-        console.log(val)
+        //console.log(val)
         this.cateLeft = Math.abs(this.$refs.ul[1].children[val].getBoundingClientRect().left + cathWidth);
       }
     },
@@ -88,6 +88,10 @@
       setCurrent(j,sendDate) {
         this.currentIndex = j;
         this.nowDate=sendDate;
+        console.log(this.nowDate)
+        // 将当前选中的日期发送给父组件
+        this.$emit("day",this.nowDate);
+
       },
       setNowDate(nowDate){
         let year = nowDate.getFullYear();
