@@ -40,7 +40,7 @@ const cardItems = [
     extraUp: '相比前天',
     extraDown: '+0',
     style: {
-      backgroundColor: '#0065C1',
+      backgroundColor: '#367BF5',
     }
   },  
 ]

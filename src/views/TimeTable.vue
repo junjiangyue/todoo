@@ -1,6 +1,6 @@
 <template>
     <div class="course-table">
-        <n-scrollbar style="max-height: 470px">
+        <n-scrollbar style="max-height: 570px">
             <div class="course-table-content">
                 
                  <div class="lastWeek" @click="getLastWeek">

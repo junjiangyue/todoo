@@ -8,7 +8,7 @@ import CalendarSider from './components/calendar/CalendarSider.vue'
 import TomatoNav from './components/public/TomatoNav.vue'
 
 // 不显示右侧边栏的路由
-const excludeRightBar = ['/todo-asset', '/settings/theme', '/login', '/statistic', '/TimeTable','/register','/settings/personalInformation','/settings/tomatoSet']
+const excludeRightBar = [ '/settings/theme', '/login', '/statistic', '/TimeTable','/register','/settings/personalInformation','/settings/tomatoSet']
 // 不显示顶、左侧边栏的路由
 const excludeTopLeft = ['/login','/register']
 // 不显示番茄钟底边栏的路由

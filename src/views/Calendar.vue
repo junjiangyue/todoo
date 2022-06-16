@@ -177,7 +177,7 @@ const calendarOptions: CalendarOptions = {
 
 <style scoped lang="scss">
 $blue-shallow: #E6EFFF;
-$blue: #0065C1;
+$blue: #367BF5;
 $blue-deep: #004889;
 
 :deep(.fc-event-time) {
@@ -185,6 +185,7 @@ $blue-deep: #004889;
 }
 
 :deep(.fc-button) {
+  border:0px;
   background-color: $blue;
   &:hover {
     background-color: $blue-deep;

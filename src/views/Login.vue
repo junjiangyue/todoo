@@ -9,11 +9,11 @@ import { RouterLink } from 'vue-router'
         <div class = "mainLeft">
           <div class="mainLogo">
             <div class="logoLeft">
-              <img src="../assets/illustration/loginLogo.png" class="logoImgStyle">
+              <img src="../assets/icon/logowhite.svg" class="logoImgStyle">
             </div>
-            <div class="logoRight">
+            <!-- <div class="logoRight">
               <span class="logoWordStyle">ToDo</span>
-            </div>
+            </div> -->
           </div>
           <div class="mainWord">
             <span class="mainWordStyle">每一天都是有计划的一天</span>
@@ -21,6 +21,7 @@ import { RouterLink } from 'vue-router'
         </div>
         <div class = "mainRight">
           <div class="loginForm">
+            <div class="title">登录</div>
             <el-form>
               <el-form-item>
                 <p class="loginWordSize">邮箱或手机号</p>
@@ -96,7 +97,7 @@ a:hover {
 }
 
 .logoLeft{
-  width: 40%;
+  width: 60%;
 }
 
 .logoRight{
@@ -132,8 +133,9 @@ a:hover {
   display: block;
   color: #FFFFFF;
   font-size: 35px;
-  margin-top: 10%;
-  margin-left: 28%;
+
+  font-family: 'FZYaoti';
+  margin-left: 26%;
 }
 
 .loginForm{
@@ -145,7 +147,7 @@ a:hover {
 
 .loginWordSize{
   font-size: 20px;
-  //margin: 0 0 20px;
+  margin: 0 0 20px;
   text-align: left;
   font-weight: bold;
 }
@@ -165,7 +167,11 @@ a:hover {
 .inputSize{
   height: 45px;
 }
-
+.title{
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
 
 
 </style>

@@ -3,7 +3,7 @@ export default {
   props:['msg'],
   data(){
     return{
-      today:'17',
+      today:'16',
       date:'2022年6月',
       startTime:'9:00',
       endTime:'10:00',
@@ -11,7 +11,7 @@ export default {
       schemeStartTime:'',
       schemeEndTime:'',
       schemeTitle:'',
-      schemeDescription:'',
+      schemeDescription:'描述',
       priority:'',
     }
   },
@@ -29,7 +29,7 @@ export default {
         this.schemeEndTime = res.data.schemeEndTime
         this.schemeTitle = res.data.schemeTitle
         if(res.data.schemeDate!=null)this.missionDate=res.data.schemeDate
-        this.schemeDescription = res.data.schemeDescription
+        if(res.data.schemeDescription!="")this.schemeDescription = res.data.schemeDescription
         this.priority = res.data.priority
       })
     }
@@ -56,7 +56,14 @@ export default {
     </div>
     <div v-if="msg!=-1&&msg!=null" class="todoInfo" :key="getMission()">
       <div class="head"><el-checkbox v-model = "complete" size="large"/>{{schemeTitle}}</div>
-      <div class="description">{{schemeDescription}}</div>
+      <div class="description">
+        <input v-model="schemeDescription" class="input"/> 
+        </div>
+      <div class="picture">
+        <img class="pic" src="@/assets/illustration/illu.png"/>
+        <div><span>“The best preparation for tomorrow is doing your best today.”</span></div>
+        <div>对明天做好的准备就是今天做到最好</div>
+      </div>
     </div>
   </section>
 </template>
@@ -73,6 +80,7 @@ export default {
 }
 .welcome{
   font-size:24px ;
+  color: #367BF5;
 }
 .illu{
   margin-top: 5em;
@@ -101,5 +109,22 @@ export default {
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 5%;
+}
+.picture{
+  width: 100%;
+  text-align: center;
+}
+.pic{
+  width: 16em;
+  margin-top: 16em;
+  margin-left: 5em;
+}
+.input{
+    border: 0;
+    BACKGROUND-COLOR: transparent;
+}
+input:focus{
+    border: #367BF5 !important;
+    outline: none;
 }
 </style>

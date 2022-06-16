@@ -1,5 +1,6 @@
 <script>
 import DatePicker from '@/components/public/DatePicker.vue';
+import { NScrollbar } from 'naive-ui';
 export default {
      data(){
         return{
@@ -7,22 +8,23 @@ export default {
                 {
                     courseId:1,
                     courseTime:"8:00 - 9:35",
-                    courseName:"用户交互技术"
+                    courseName:"操作系统"
+                },
+                {
+                    courseId:2,
+                    courseTime:"15:30 - 17:05",
+                    courseName:"中国传统插花艺术"
+                },
+                {
+                    courseId:3,
+                    courseTime:"19:00 - 21:25",
+                    courseName:"概率论"
                 }
             ],
             mission:"",
             todolist:[
             ],
-            checklist:[
-                {
-                    checkId:1,
-                    checkTime:"10:00 - 11:35",
-                    checkTitle:"写项目作业",
-                    checkPriority:"极高",
-                    checkState:1,
-                    checkLabel:"学习"
-                }
-            ],
+            checklist:[],
             today:'30',
             yesterday:'16',
             daybeforeyesterday:'15',
@@ -42,11 +44,14 @@ export default {
                 label:'',
                 date1: '',
                 date2: '',
-                date:'2022/6/17',
+                date:'2022/6/16',
                 time1:'',
                 time2:''
                 }
         }
+    },
+    components: {
+        NScrollbar
     },
      methods:{
         getDate(){
@@ -77,7 +82,8 @@ export default {
             console.log(this.form.date1[0])
             console.log(this.form.date1[1])
             var d=this.form.date
-            var date = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+            if(d=="2022/6/16")var date = d
+            else var date = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
             if(this.form.date1!='')
             {
                 var d=this.form.date1[0]
@@ -105,10 +111,48 @@ export default {
                 }
             }).then(res=>{
                 console.log(res)
+                // 从后端重新获取用户当天的任务列表
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime='今天'
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                       if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
+                    }
+                }
+                this.todolist = res.data
+                this.$forceUpdate()
+                }
+            })
             })
 
-            // 从后端重新获取用户当天的任务列表
-
+            
         },
         godetail(missionId){
             this.$emit("mission",missionId);
@@ -122,24 +166,52 @@ export default {
                     req:this.req
                 }
             }).then(res=>{
-                console.log(res)
                 if(res.data.status==-1){
                     
                 }
                 else{
-            
                 for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    
                     if(res.data[i].schemeStartTime == null){
                         res.data[i].schemeStartTime='今天'
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
-                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
                     }
                 }
                 this.todolist = res.data
                 }
             })
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getCheckList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                console.log(res)
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                    this.checklist = res.data
+                }
+            })
+
         },
         gotoToday(){
             this.today = this.today
@@ -158,21 +230,30 @@ export default {
                     req:day
                 }
             }).then(res=>{
-                console.log(res)
                 if(res.data.status==-1){
-                    
                 }
                 else{
-            
                 for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                    }
+                }
+                console.log(res)
+                for(var i=0;i<res.data.length;i++){
+
                     if(res.data[i].schemeStartTime == null){
                         if(day==this.req) res.data[i].schemeStartTime='今天'
                         else res.data[i].schemeStartTime=day
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
-                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
                     }
+                    
                 }
                 this.todolist = res.data
                 }
@@ -190,13 +271,149 @@ export default {
                 console.log(res)
                 this.$forceUpdate();
                 })
+        },
+        changeState(state,id){
+            console.log("状态",state)
+            if(state==true){
+                state='0'
+            }
+            if(state==false){
+                state='1'
+            }
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/doneMission",
+                params:{
+                    state:state,
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist.splice(i,1)
+                            this.$forceUpdate();
+                    }
+                }
+                
+            })
+        },
+        check(state){
+            if(state==1||state==false){
+                return true
+            }else{
+                return false
+            }
+        },
+        deleteMission(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/deleteMission",
+                params:{
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+               this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime='今天'
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
+                    }
+                }
+                this.todolist = res.data
+                 this.$forceUpdate();
+                }
+            })
+                
+            })
+        },
+        changeDate(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionTime",
+                params:{
+                    scheme_date:'2022/6/17',
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist=this.todolist.splice(i,1)
+                    }
+                }
+                this.$forceUpdate();
+                })
+        },
+        changepriority(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionPriority",
+                params:{
+                    priority:'1',
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist[i].priority='1'
+                    }
+                }
+                this.$forceUpdate();
+                })
+        },
+        changetag(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionTime",
+                params:{
+                    tag:'生活',
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist[i].tag_name='生活'
+                    }
+                }
+                this.$forceUpdate();
+                })
         }
     },
     mounted(){
         this.getDate()
         this.getscheme()
     },
-    
     components:{
         DatePicker
     }
@@ -205,30 +422,13 @@ export default {
 
 <template>
 <div class="Listmode">
+<n-scrollbar style="max-height: 570px">
         <el-row>
             <el-col :span="24">
             <div class="daypicker">
                 <DatePicker @day="getChildMsg" ></DatePicker>
-                <!-- <el-row class="row">
-                    <el-col :span="4"><div>
-                        <img src="@/assets/icon/leftarrow.png"/>
-                    </div>
-                    </el-col>
-                    <el-col :span="3" @click="gotoDaybeforeyesterday" ><div style="cursor:pointer">{{daybeforeyesterday}}</div>
-                    </el-col>
-                    <el-col :span="3" @click="gotoYesterday"><div  style="cursor:pointer">{{yesterday}}</div></el-col>
-                    <el-col :span="3" @click="gotoToday"><div class="today">
-                        <div  style="cursor:pointer">{{today}}</div></div>
-                        </el-col>
-                    <el-col :span="3" @click="gotoTomorrow"><div  style="cursor:pointer">{{tomorrow}}</div></el-col>
-                    <el-col :span="3" @click="gotoDayaftertomorrow"><div style="cursor:pointer">{{dayaftertomorrow}}</div></el-col>
-                    <el-col :span="5"><div>
-                        <img src="@/assets/icon/rightarrow.png"/>
-                    </div></el-col>
-                </el-row> -->
                 </div>
             </el-col>
-            <!-- <el-col :span="12" style="display:flex;align-items: center;">{{date}}，今天</el-col> -->
         </el-row>
 
 
@@ -238,7 +438,7 @@ export default {
           <template #title >
           <div class="collapse-title">今日课程</div>
         </template>
-        <div class="course">
+        <div class="course" style="margin-bottom:1em">
             <div  v-for="(item) in courseData" :key="item.courseId">
             <el-row class="courseItem" >
                 <el-col :span="4" class="courseTime">
@@ -268,7 +468,7 @@ export default {
             <div v-for="(scheme) in todolist" :key = "scheme.schemeId">
                 <el-row class="scheme" @click="godetail(scheme.schemeId)">
                     <el-col :span="1">
-                    <el-checkbox v-model = "complete" size="large"/>
+                    <el-checkbox v-model = "scheme.state" @click="changeState(scheme.state,scheme.schemeId)" size="large"/>
                     </el-col>
                     <el-col :span="4" class="schemeTime">
                         {{scheme.schemeStartTime}}
@@ -290,15 +490,41 @@ export default {
                                 </span>
                                 <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item :icon="Plus">修改时间
-                                    
+                                    <el-dropdown-item :icon="Plus">
+                                    <div>
+                                    修改时间
+                                    </div>
+                                    <div>
+                                    <el-button @click="changeDate(scheme.schemeId)">明天</el-button>
+                                    <el-button>选择时间</el-button>
+                                    </div>
                                     </el-dropdown-item>
                                     <el-dropdown-item :icon="CirclePlusFilled">
-                                    重要程度
+                                    <div>重要程度</div>
+                                    <div>
+                                        <el-button>
+                                        <el-icon  color="#EA3D2F" @click="changepriority(scheme.schemeId)"><Flag /></el-icon></el-button>
+                                         <el-button><el-icon  color="#F3AA18"><Flag /></el-icon></el-button>
+                                         <el-button> <el-icon  color="#2FA84F"><Flag /></el-icon></el-button>
+                                          <el-button> <el-icon  color="#9E9E9E"><Flag /></el-icon></el-button>
+                                    </div>
                                     </el-dropdown-item>
-                                    <el-dropdown-item :icon="CirclePlus">置顶</el-dropdown-item>
-                                    <el-dropdown-item :icon="Check">修改标签</el-dropdown-item>
-                                    <el-dropdown-item :icon="CircleCheck">删除</el-dropdown-item>
+                                    <!-- <el-dropdown-item :icon="CirclePlus">
+                                    <div>
+                                    置顶
+                                    </div></el-dropdown-item> -->
+                                    <el-dropdown-item :icon="Check">
+                                    <div>
+                                    修改标签
+                                    </div>
+                                    <div > <el-tag style="margin-right:10px">学习</el-tag>
+                                    <el-tag style="margin-right:10px" type="danger" @click="changetag(scheme.schemeId)">生活</el-tag>
+                                    <el-tag type="success">运动</el-tag></div>
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :icon="CircleCheck">
+                                    <div @click="deleteMission(scheme.schemeId)">
+                                    <el-icon><DeleteFilled /></el-icon>
+                                    删除</div></el-dropdown-item>
                                 </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -344,6 +570,17 @@ export default {
                             <el-option style="color: #F3AA18;" label="重要不紧急" value="2" />
                             <el-option style="color: #2FA84F;" label="不重要紧急" value="3" />
                             <el-option label="不重要不紧急" value="4" />
+                            </el-select>
+                        </div>
+                    </el-form-item>
+                     <el-form-item>
+                         <div class="line">
+                            <img style="margin-left: 1em;" src="@/assets/icon/rep.svg"/>
+                            <span style="font-size:14px;padding:5px;">设置重复</span>
+                            <el-select v-model="form.priority" placeholder="不重复">
+                            <el-option style="color: #EA3D2F;" label="每天重复" value="1" />
+                            <el-option style="color: #F3AA18;" label="每周重复" value="2" />
+                            <el-option style="color: #2FA84F;" label="每月重复" value="3" />
                             </el-select>
                         </div>
                     </el-form-item>
@@ -415,13 +652,13 @@ export default {
                         <el-checkbox v-model = "complete" size="large"/>
                         </el-col>
                         <el-col :span="4" class="schemeTime">
-                            {{check.checkTime}}
+                            {{check.repetitionScope}}
                         </el-col>
                         <el-col :span="10">
-                            {{check.checkTitle}}
+                            {{check.schemeTitle}}
                         </el-col>
                         <el-col :span="4">
-                            {{check.checkLabel}}
+                            <el-tag>{{check.tagName}}</el-tag>
                         </el-col>
                         <el-col :span="2">
                              <el-dropdown trigger="click">
@@ -447,6 +684,7 @@ export default {
       </el-collapse-item>
     </el-collapse>
   </div>
+  </n-scrollbar>
 </div>
 </template>
 
@@ -454,10 +692,11 @@ export default {
 
 .courseItem{
     width: 100%;
-    height: 4em;
+    height: 3.2em;
     display: flex;
     align-items: center;
     font-size: 14px;
+
 }
 .scheme{
     height: 48px;
