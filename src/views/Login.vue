@@ -1,6 +1,5 @@
-<script setup>
-import { RouterLink } from 'vue-router'
-</script>
+
+
 
 <template>
   <div clas = "container">
@@ -25,11 +24,11 @@ import { RouterLink } from 'vue-router'
             <el-form>
               <el-form-item>
                 <p class="loginWordSize">邮箱或手机号</p>
-                <el-input class="inputSize" placeholder="请输入你的邮箱或手机号"></el-input>
+                <el-input class="inputSize" placeholder="请输入你的邮箱或手机号" v-model="input1"></el-input>
               </el-form-item>
               <el-form-item>
                 <p class="loginWordSize">密码</p>
-                <el-input class="inputSize" placeholder="请输入你的密码"></el-input>
+                <el-input class="inputSize" type="password" placeholder="请输入你的密码"  v-model="input2"></el-input>
               </el-form-item>
               <el-form-item>
                 <el-button type="primary" class="loginButton" @click="login">登录</el-button>
@@ -48,6 +47,13 @@ import { RouterLink } from 'vue-router'
 <script>
 
 export default {
+  data(){
+    return{
+      input1:'',
+      input2:''
+
+    }
+  },
   name:"Login",
 
   methods:{

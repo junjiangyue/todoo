@@ -394,7 +394,7 @@ export default {
         changetag(id){
             this.$axios({
                 method:"get",
-                url:"http://localhost:8080/mission/changeMissionTime",
+                url:"http://localhost:8080/mission/changeMissionTag",
                 params:{
                     tag:'生活',
                     missionID:id
