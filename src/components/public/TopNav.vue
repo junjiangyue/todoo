@@ -1,5 +1,12 @@
-<script setup>
+<script>
 import { RouterLink } from 'vue-router'
+export default{
+  methods:{
+    gotoGithub(){
+      window.open('https://github.com/junjiangyue/todoo',"_blank")
+    }
+  }
+}
 </script>
 
 <template>
@@ -13,12 +20,12 @@ import { RouterLink } from 'vue-router'
           <div class="right">
             <el-row>
               <el-col :span="9">
-              <div class="help">
+              <div class="help" @click="gotoGithub" style="cursor:pointer">
                 帮助
                 <img src="@/assets/icon/help-circle.png"/>
               </div>
               </el-col>
-              <el-col :span="9"><div class="daylight">
+              <el-col :span="9"><div class="daylight" style="cursor:pointer">
                 白天模式
               </div></el-col>
               <el-col :span="4"><img src="@/assets/icon/userpic.png"/></el-col>

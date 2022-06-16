@@ -209,6 +209,7 @@ export default{
                 }
                 this.todolist = res.data
                 }
+            }
             })
             this.$axios({
                 method:"get",

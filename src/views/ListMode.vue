@@ -573,6 +573,17 @@ export default {
                             </el-select>
                         </div>
                     </el-form-item>
+                     <el-form-item>
+                         <div class="line">
+                            <img style="margin-left: 1em;" src="@/assets/icon/rep.svg"/>
+                            <span style="font-size:14px;padding:5px;">设置重复</span>
+                            <el-select v-model="form.priority" placeholder="不重复">
+                            <el-option style="color: #EA3D2F;" label="每天重复" value="1" />
+                            <el-option style="color: #F3AA18;" label="每周重复" value="2" />
+                            <el-option style="color: #2FA84F;" label="每月重复" value="3" />
+                            </el-select>
+                        </div>
+                    </el-form-item>
                 </el-col>
                 <el-col :span="6" style="background-color:#fff;border-radius: 0px 10px 0px 0px;border-left: solid 1px #E3E5E5;">
                     <div class="time">
