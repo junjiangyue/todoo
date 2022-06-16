@@ -30,7 +30,7 @@ interface RawTodo {
 const todos = ref<EventInput[]>([])
 
 // 颜色别名
-const [ red, blue, yellow, purple, green ] = ['#B20000', '#0065C1', '#E5C100', '#E6EFFF', '#007505' ]
+const [ red, blue, yellow, purple, green, carol, white ] = ['#B20000', '#0065C1', '#E5C100', '#E6EFFF', '#007505', '#9F85EC', '#FFF' ]
 
 onBeforeMount(async () => {
   const res = await axios.get(`/api/alltodo`)
@@ -69,11 +69,13 @@ function parseTodo (todo: RawTodo) {
       break
     case '4':
       result.color = purple
+      result.textColor = carol
       break
   }
 
   if (todo.state === '1') {
     result.color = green
+    result.textColor = white
   }
 
   if (todo.repetition) {
@@ -156,6 +158,7 @@ const calendarOptions: CalendarOptions = {
   initialEvents: todos.value,
   selectable: true,
   dateClick: (info) => {
+    console.log(info.date)
     // 点击日期，切换右侧栏显示
     emits('click-date', info.date)
   }

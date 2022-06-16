@@ -40,10 +40,10 @@ app.get('/alltodo', (req, res) => {
 
 app.get('/datetodo/:date', (req, res) => {
   connection.query(
-    `SELECT * FROM scheme 
-    WHERE scheme_start_time < CAST("${req.params.date}" AS DATETIME) 
-    AND scheme_end_time >CAST("${req.params.date}" AS DATETIME) 
-    OR scheme_date = CAST("${req.params.date}" AS DATETIME)`,
+    `select * from scheme where 
+    (scheme_start_time < cast('${req.params.date}' as datetime) and not(repetition>0))
+    or (scheme_date='${req.params.date}')
+    or (repetition > 0)`,
     (err, result) => {
       if (err) throw err
       res.end(JSON.stringify(JSON.parse(JSON.stringify(result))))
