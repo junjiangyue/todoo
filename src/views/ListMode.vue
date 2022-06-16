@@ -212,9 +212,7 @@ export default {
                     req:day
                 }
             }).then(res=>{
-                
                 if(res.data.status==-1){
-                    
                 }
                 else{
                 for(var i=0;i<res.data.length;i++){
@@ -284,6 +282,52 @@ export default {
             }else{
                 return false
             }
+        },
+        deleteMission(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/deleteMission",
+                params:{
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+               this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime='今天'
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                    }
+                }
+                this.todolist = res.data
+                 this.$forceUpdate();
+                }
+            })
+                
+            })
         }
     },
     mounted(){
@@ -303,26 +347,8 @@ export default {
             <el-col :span="24">
             <div class="daypicker">
                 <DatePicker @day="getChildMsg" ></DatePicker>
-                <!-- <el-row class="row">
-                    <el-col :span="4"><div>
-                        <img src="@/assets/icon/leftarrow.png"/>
-                    </div>
-                    </el-col>
-                    <el-col :span="3" @click="gotoDaybeforeyesterday" ><div style="cursor:pointer">{{daybeforeyesterday}}</div>
-                    </el-col>
-                    <el-col :span="3" @click="gotoYesterday"><div  style="cursor:pointer">{{yesterday}}</div></el-col>
-                    <el-col :span="3" @click="gotoToday"><div class="today">
-                        <div  style="cursor:pointer">{{today}}</div></div>
-                        </el-col>
-                    <el-col :span="3" @click="gotoTomorrow"><div  style="cursor:pointer">{{tomorrow}}</div></el-col>
-                    <el-col :span="3" @click="gotoDayaftertomorrow"><div style="cursor:pointer">{{dayaftertomorrow}}</div></el-col>
-                    <el-col :span="5"><div>
-                        <img src="@/assets/icon/rightarrow.png"/>
-                    </div></el-col>
-                </el-row> -->
                 </div>
             </el-col>
-            <!-- <el-col :span="12" style="display:flex;align-items: center;">{{date}}，今天</el-col> -->
         </el-row>
 
 
@@ -384,15 +410,26 @@ export default {
                                 </span>
                                 <template #dropdown>
                                 <el-dropdown-menu>
-                                    <el-dropdown-item :icon="Plus">修改时间
-                                    
+                                    <el-dropdown-item :icon="Plus">
+                                    <div>
+                                    修改时间
+                                    </div>
                                     </el-dropdown-item>
                                     <el-dropdown-item :icon="CirclePlusFilled">
-                                    重要程度
+                                    <div>重要程度</div>
                                     </el-dropdown-item>
-                                    <el-dropdown-item :icon="CirclePlus">置顶</el-dropdown-item>
-                                    <el-dropdown-item :icon="Check">修改标签</el-dropdown-item>
-                                    <el-dropdown-item :icon="CircleCheck">删除</el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlus">
+                                    <div>
+                                    置顶
+                                    </div></el-dropdown-item>
+                                    <el-dropdown-item :icon="Check">
+                                    <div>
+                                    修改标签
+                                    </div></el-dropdown-item>
+                                    <el-dropdown-item :icon="CircleCheck">
+                                    <div @click="deleteMission(scheme.schemeId)">
+                                    <el-icon><DeleteFilled /></el-icon>
+                                    删除</div></el-dropdown-item>
                                 </el-dropdown-menu>
                                 </template>
                             </el-dropdown>
@@ -515,7 +552,7 @@ export default {
                             {{check.schemeTitle}}
                         </el-col>
                         <el-col :span="4">
-                            {{check.tagName}}
+                            <el-tag>{{check.tagName}}</el-tag>
                         </el-col>
                         <el-col :span="2">
                              <el-dropdown trigger="click">
