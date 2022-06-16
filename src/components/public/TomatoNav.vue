@@ -1,57 +1,84 @@
 <!--<script lang="ts" setup>-->
 <script setup>
-import { NIcon, NScrollbar, NText } from 'naive-ui'
+import { NIcon, NButton } from 'naive-ui'
 import { PauseCircleSharp } from '@vicons/ionicons5'
 import { PlayCircleSharp } from '@vicons/ionicons5'
 import { StopCircleSharp } from '@vicons/ionicons5'
+import { ArrowBackIosNewRound } from '@vicons/material'
+import TomatoIcon from '@/components/icons/TomatoIcon.vue'
+import { ref } from 'vue'
 
+const foldMark = ref(false)
 </script>
 
 <template>
-  <footer class="footer-wrapper">
-    <img
-      class="imgStyle"
-      src="src/assets/illustration/tomatoImg.jpg"/>
+  <transition name="fade" mode="out-in">
+    <footer
+      v-if="!foldMark"
+      :class="['footer-wrapper']">
 
-    <div class="timeStyle">
-      <div class="top-message">
-        <span v-show="studyTag">{{hourSet}} : {{minSet}} : {{secondSet}}</span>
-        <span v-show="restTag">{{restHour}} : {{restSet}} : {{restSecShow}}</span>
+      <n-icon :size="42">
+        <tomato-icon/>
+      </n-icon>
+
+      <div class="message-wrapper">
+        <div class="timeStyle">
+          <div class="top-message">
+            <span v-show="studyTag">{{hourSet}} : {{minSet}} : {{secondSet}}</span>
+            <span v-show="restTag">{{restHour}} : {{restSet}} : {{restSecShow}}</span>
+          </div>
+          <div class="bottom-message">
+            <span v-show="textTagAfter">专注中···</span>
+            <span v-show="textTagBefore">开始专注学习吧！</span>
+            <span v-show="textTagPause">快来继续学习吧！</span>
+            <span v-show="restTag">先休息休息吧！</span>
+          </div>
+        </div>
       </div>
-      <div class="bottom-message">
-        <span v-show="textTagAfter">专注中···</span>
-        <span v-show="textTagBefore">开始专注学习吧！</span>
-        <span v-show="textTagPause">快来继续学习吧！</span>
-        <span v-show="restTag">先休息休息吧！</span>
+
+      <div class="button-wrapper">
+        <n-icon class="icon" :size="60" color="#9F85EC" v-if="startTag" @click="start()">
+          <play-circle-sharp />
+        </n-icon>
+        <n-icon class="icon" :size="60" color="#9F85EC" v-if="pauseTag" @click="stop()">
+          <pause-circle-sharp/>
+        </n-icon>
+        <n-icon class="icon" :size="60" color="#9F85EC" v-if="stopTag" @click="reSet()">
+          <stop-circle-sharp/>
+        </n-icon>
+        <n-icon class="icon" :size="60" color="#9F85EC" v-if="restActionStartTag" @click="rest()">
+          <play-circle-sharp/>
+        </n-icon>
+        <n-icon class="icon" :size="60" color="#9F85EC" v-if="restActionStopTag" @click="stopRest()">
+          <stop-circle-sharp/>
+        </n-icon>
+      </div>    
+
+      <div class="fold-wrapper">
+        <n-icon
+          :size="28"
+          color="#38004D"
+          class="icon"
+          @click="foldMark = true">
+          <arrow-back-ios-new-round/>
+        </n-icon>
       </div>
-    </div>
-    <div class="button-wrapper">
-      <n-icon :size="60" color="#EA3D2F" v-if="startTag" @click="start()">
-        <play-circle-sharp />
+
+    </footer>
+    <n-button
+      text
+      circle
+      class="expand"
+      v-else
+      @click="foldMark = false">
+      <n-icon :size="42">
+        <tomato-icon/>
       </n-icon>
-      <n-icon :size="60" color="#EA3D2F" v-if="pauseTag" @click="stop()">
-        <pause-circle-sharp/>
-      </n-icon>
-      <n-icon :size="60" color="#EA3D2F" v-if="stopTag" @click="reSet()">
-        <stop-circle-sharp/>
-      </n-icon>
-      <n-icon :size="60" color="#EA3D2F" v-if="restActionStartTag" @click="rest()">
-        <play-circle-sharp/>
-      </n-icon>
-      <n-icon :size="60" color="#EA3D2F" v-if="restActionStopTag" @click="stopRest()">
-        <stop-circle-sharp/>
-      </n-icon>
-    </div>
-<!--        <img class="imgStyle2" style="margin-right: 1%" v-show="startTag" @click="start()" src="src/assets/icon/start.png"/>
-      <img class="imgStyle2" style="margin-right: 1%" v-show="pauseTag" @click="stop()" src="src/assets/icon/pauseButton.png"/>
-      <img class="imgStyle2" style="margin-right: 1%" v-show="stopTag" @click="reSet()" src="src/assets/icon/stop.png"/>-->
-  </footer>
+    </n-button>
+  </transition>
 </template>
 
-
 <script>
-
-
   export default{
     data(){
       return{
@@ -288,65 +315,92 @@ import { StopCircleSharp } from '@vicons/ionicons5'
 </script>
 
 <style scoped lang="scss">
-$bg: #F6F1D7;
+$bg: #F5F6FF;
+$iris: #A5A6F6;
+$purple: #9F85EC;
 
 .footer-wrapper {
   box-sizing: border-box;
   position: absolute;
   background-color: $bg;
-  bottom: -.3rem;
-  left: -.4rem;
-  right: -.4rem;
-  height: 8rem;
+  bottom: 1.4rem;
+  left: 1.2rem;
+  right: 1.2rem;
+  height: 4rem;
   display: flex;
   justify-content: space-around;
-  z-index: 99;
+  align-items: center;
+  z-index: 10;
+  border-radius: 10px;
+  border: 1.5px solid $iris;
+  transition: box-shadow ease-out .4s;
+
+  &:hover {
+    box-shadow: 0 3px 12px  rgba(2, 2, 255, 0.1);
+  }
 }
 
-.imgStyle {
-  width: 8rem;
-  height: 8rem;
+.message-wrapper {
+  width: 32%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .timeStyle{
-  font-size: 1.875rem;
+  flex: 1;
+  font-size: 1.4rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: #EA3D2F;
+  color: $purple;
   font-family: "PingFang SC", cursive;
+  text-align: center;
 }
 
 .bottom-message {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  margin-left: 1rem;
 }
 
 .button-wrapper {
-  width: 33%;
+  width: 24%;
   display: flex;
   gap: 1%;
   align-items: center;
   justify-content: space-evenly;  
 }
 
+.icon {
+  cursor: pointer;
+}
+
 .imgStyle2{
   width: 5em;
   height: 5em;
-  color: #EA3D2F;
+  color: #9F85EC;
 }
 
-/*.imgStyleStop{
-  width: 5em;
-  height: 5em;
-  margin-top: 2em;
-  color: #EA3D2F;
+.fold-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1rem;
+  justify-self: end;
 }
 
-.imgStylePause{
-  width: 5em;
-  height: 5em;
-  margin-top: 2em;
-  color: #EA3D2F;
-}*/
+.expand {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 3.2rem;
+  z-index: 10;
+}
 
+.fade-enter-active, .fade-leave-active {
+  transition: all 0.2s linear;
+}
+
+.fade-enter-from, .fade-leave-to {
+  opacity: 0;
+}
 </style> 

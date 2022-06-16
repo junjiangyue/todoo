@@ -12,7 +12,7 @@ const excludeRightBar = [ '/settings/theme', '/login', '/statistic', '/TimeTable
 // 不显示顶、左侧边栏的路由
 const excludeTopLeft = ['/login','/register']
 // 不显示番茄钟底边栏的路由
-const excludeTomatoBar = ['/login', '/register', '/settings/theme', '/settings/personalInformation', '/statistic','/settings/tomatoSet']
+const excludeTomatoBar = ['/login', '/register']
 
 
 // 选中日期
