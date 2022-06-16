@@ -18,7 +18,7 @@ export default {
                     checkId:1,
                     checkTime:"10:00 - 11:35",
                     checkTitle:"写项目作业",
-                    checkPriority:"极高",
+                    checkPriority:"",
                     checkState:1,
                     checkLabel:"学习"
                 }
@@ -42,7 +42,7 @@ export default {
                 label:'',
                 date1: '',
                 date2: '',
-                date:'2022/6/17',
+                date:'2022/6/16',
                 time1:'',
                 time2:''
                 }
@@ -77,7 +77,8 @@ export default {
             console.log(this.form.date1[0])
             console.log(this.form.date1[1])
             var d=this.form.date
-            var date = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+            if(d=="2022/6/16")var date = d
+            else var date = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
             if(this.form.date1!='')
             {
                 var d=this.form.date1[0]
@@ -105,10 +106,44 @@ export default {
                 }
             }).then(res=>{
                 console.log(res)
+                // 从后端重新获取用户当天的任务列表
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime='今天'
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                    }
+                }
+                this.todolist = res.data
+                this.$forceUpdate()
+                }
+            })
             })
 
-            // 从后端重新获取用户当天的任务列表
-
+            
         },
         godetail(missionId){
             this.$emit("mission",missionId);
@@ -122,13 +157,21 @@ export default {
                     req:this.req
                 }
             }).then(res=>{
-                console.log(res)
                 if(res.data.status==-1){
                     
                 }
                 else{
-            
                 for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    
                     if(res.data[i].schemeStartTime == null){
                         res.data[i].schemeStartTime='今天'
                     }
@@ -140,6 +183,17 @@ export default {
                 this.todolist = res.data
                 }
             })
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getCheckList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                console.log(res)
+                this.checklist = res.data
+            })
+
         },
         gotoToday(){
             this.today = this.today
@@ -158,13 +212,19 @@ export default {
                     req:day
                 }
             }).then(res=>{
-                console.log(res)
+                
                 if(res.data.status==-1){
                     
                 }
                 else{
-            
                 for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                    }
+                }
+                console.log(res)
+                for(var i=0;i<res.data.length;i++){
+
                     if(res.data[i].schemeStartTime == null){
                         if(day==this.req) res.data[i].schemeStartTime='今天'
                         else res.data[i].schemeStartTime=day
@@ -173,6 +233,7 @@ export default {
                         var length = res.data[i].schemeStartTime.length
                         res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
                     }
+                    
                 }
                 this.todolist = res.data
                 }
@@ -190,6 +251,39 @@ export default {
                 console.log(res)
                 this.$forceUpdate();
                 })
+        },
+        changeState(state,id){
+            console.log("状态",state)
+            if(state==true){
+                state='0'
+            }
+            if(state==false){
+                state='1'
+            }
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/doneMission",
+                params:{
+                    state:state,
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist.splice(i,1)
+                            this.$forceUpdate();
+                    }
+                }
+                
+            })
+        },
+        check(state){
+            if(state==1||state==false){
+                return true
+            }else{
+                return false
+            }
         }
     },
     mounted(){
@@ -268,7 +362,7 @@ export default {
             <div v-for="(scheme) in todolist" :key = "scheme.schemeId">
                 <el-row class="scheme" @click="godetail(scheme.schemeId)">
                     <el-col :span="1">
-                    <el-checkbox v-model = "complete" size="large"/>
+                    <el-checkbox v-model = "scheme.state" @click="changeState(scheme.state,scheme.schemeId)" size="large"/>
                     </el-col>
                     <el-col :span="4" class="schemeTime">
                         {{scheme.schemeStartTime}}
@@ -415,13 +509,13 @@ export default {
                         <el-checkbox v-model = "complete" size="large"/>
                         </el-col>
                         <el-col :span="4" class="schemeTime">
-                            {{check.checkTime}}
+                            {{check.repetitionScope}}
                         </el-col>
                         <el-col :span="10">
-                            {{check.checkTitle}}
+                            {{check.schemeTitle}}
                         </el-col>
                         <el-col :span="4">
-                            {{check.checkLabel}}
+                            {{check.tagName}}
                         </el-col>
                         <el-col :span="2">
                              <el-dropdown trigger="click">
