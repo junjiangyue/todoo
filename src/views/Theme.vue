@@ -17,7 +17,7 @@
         </li>
       </ul>
     </div>
-    <div>
+    <!-- <div>
       <span class="titleWord"><img :src="ListIcon" style="margin-right: 0.5em;">季节系列</span>
     </div>
     <div>
@@ -29,7 +29,7 @@
           </div>
         </li>
       </ul>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -47,7 +47,7 @@ const toggleDark = useToggle(isDark)
 export default {
   data() {
     return {
-      currentColor:-1,
+      currentColor: isDark.value ? 1 : 0,
       currentSeason:-1,
       ListIcon: new URL('../assets/icon/rightarrow2.png', import.meta.url).href,
       themeListColor: [
@@ -76,8 +76,8 @@ export default {
     addClassColor:function(index){
       toggleDark()
 
-      this.currentColor=index;
-      this.currentSeason=-1;
+      this.currentColor = index;
+      this.currentSeason = -1;
       console.log(this.current);
     },
     addClassSeason:function(index){
