@@ -236,6 +236,8 @@ export default {
                 for(var i=0;i<res.data.length;i++){
                     if(res.data[i].state=="1"){
                         res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
                     }
                 }
                 console.log(res)
@@ -481,7 +483,7 @@ export default {
                     </el-col>
                     <el-col :span="4" class="label">
                         <el-tag v-if="scheme.tagName=='学习'">{{scheme.tagName}}</el-tag>
-                        <el-tag type="success" v-if="scheme.tagName=='代码'||scheme.tagName=='软测'">{{scheme.tagName}}</el-tag>
+                        <el-tag type="success" v-if="scheme.tagName=='代码'||scheme.tagName=='生活'">{{scheme.tagName}}</el-tag>
                     </el-col>
                     <el-col :span="2">
                          <el-dropdown trigger="click">
@@ -577,10 +579,10 @@ export default {
                          <div class="line">
                             <img style="margin-left: 1em;" src="@/assets/icon/rep.svg"/>
                             <span style="font-size:14px;padding:5px;">设置重复</span>
-                            <el-select v-model="form.priority" placeholder="不重复">
-                            <el-option style="color: #EA3D2F;" label="每天重复" value="1" />
-                            <el-option style="color: #F3AA18;" label="每周重复" value="2" />
-                            <el-option style="color: #2FA84F;" label="每月重复" value="3" />
+                            <el-select placeholder="不重复">
+                            <el-option style="color: #EA3D2F;" label="每天重复" value="4" />
+                            <el-option style="color: #F3AA18;" label="每周重复" value="5" />
+                            <el-option style="color: #2FA84F;" label="每月重复" value="6" />
                             </el-select>
                         </div>
                     </el-form-item>

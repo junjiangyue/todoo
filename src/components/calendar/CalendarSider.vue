@@ -306,7 +306,7 @@ function openModal () {
 </template>
 
 <style scoped lang="scss">
-$red: #B20000;
+$red: #EA3D2F;
 $blue: #0065C1;
 $yellow: #E5C100;
 $purple: #E6EFFF;

@@ -30,7 +30,7 @@ interface RawTodo {
 const todos = ref<EventInput[]>([])
 
 // 颜色别名
-const [ red, blue, yellow, purple, green, carol, white ] = ['#B20000', '#0065C1', '#E5C100', '#E6EFFF', '#007505', '#9F85EC', '#FFF' ]
+const [ red, blue, yellow, purple, green, carol, white ] = ['#EA3D2F', '#0065C1', '#F3AA18', '#E6EFFF', '#069697', '#9F85EC', '#FFF' ]
 
 onBeforeMount(async () => {
   const res = await axios.get(`/api/alltodo`)
