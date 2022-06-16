@@ -12,14 +12,14 @@ const router = createRouter({
           path:'/TimeTable',
           name:'TimeTable',
           components:{
-            modeShift:()=> import('@/views/TimeTable.vue')
+            modeShift: () => import('@/views/TimeTable.vue')
            }
         },
         {
           path:'',
           name:'ListMode',
           components:{
-            modeShift:()=> import('@/views/ListMode.vue')
+            modeShift: () => import('@/views/ListMode.vue')
            }
         }
       ]
