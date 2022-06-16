@@ -1,28 +1,14 @@
 <script>
+import { NScrollbar } from 'naive-ui';
 export default{
     data(){
         return {
+            req:'',
             missionId:0,
-            todolist:[
-                 {
-                    schemeId:1,
-                    schemeTime:"10:00 - 11:35",
-                    schemeTitle:"写项目作业",
-                    schemePriority:"极高",
-                    schemeState:1,
-                    schemeLabel:"学习"
-                }
-            ],
-            checklist:[
-                {
-                    checkId:2,
-                    checkTime:"10:00 - 11:35",
-                    checkTitle:"写项目作业",
-                    checkPriority:"极高",
-                    checkState:1,
-                    checkLabel:"学习"
-                }
-            ],
+            todolist:[],
+            checklist:[],
+            failedlist:[],
+            futurelist:[],
             activeNames:['1','2','3'],
             visible:false,
             formLabelWidth:'140px',
@@ -36,17 +22,224 @@ export default{
                 date2: '',}
         }
     },
+    components: {
+        NScrollbar
+    },
     methods:{
         godetail(missionId){
             this.$emit("mission",missionId);
             //console.log(schemeId)
         },
-    }
+
+        getDate(){
+            var d = new Date();
+            this.req = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+            console.log(d)
+            this.date =(d.getMonth()+1).toString()+"月"+d.getDate().toString()+"日";
+        },
+        getFailedList(){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getUndoList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                    console.log(res)
+                }
+                else{
+                     console.log(res)
+                     for(var i=0;i<res.data.length;i++){
+                        console.log(res.data[i].state)
+                        if(res.data[i].schemeStartTime == null){
+                            res.data[i].schemeStartTime=res.data[i].schemeDate.substring(6,7)+'月'+res.data[i].schemeDate.substring(9,10)+'日'
+                        }
+                        else{
+                            var length = res.data[i].schemeStartTime.length
+                            if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
+                        }
+                    }
+                    this.failedlist = res.data
+                    this.$forceUpdate()
+                }
+            })
+        },
+        getFutureList(){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getfFutureList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                    console.log(res)
+                }
+                else{
+                     console.log(res)
+                     for(var i=0;i<res.data.length;i++){
+                        console.log(res.data[i].state)
+                        if(res.data[i].schemeStartTime == null){
+                            res.data[i].schemeStartTime='今天'
+                        }
+                        else{
+                            var length = res.data[i].schemeStartTime.length
+                            if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
+                        }
+                    }
+                    this.futurelist = res.data
+                    this.$forceUpdate()
+                }
+            })
+        },
+        add(){
+            console.log(this.form);
+            this.visible = false;
+            console.log(this.form.date1)
+            console.log(this.form.date1[0])
+            console.log(this.form.date1[1])
+            var d=this.form.date
+            if(d=="2022/6/16")var date = d
+            else var date = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+            if(this.form.date1!='')
+            {
+                var d=this.form.date1[0]
+                var start = d.getFullYear().toString()+'/'+(d.getMonth()+1).toString()+'/'+d.getDate().toString()
+                var e=this.form.date1[1]
+                var end = e.getFullYear().toString()+'/'+(e.getMonth()+1).toString()+'/'+e.getDate().toString()
+            }else{
+                var start
+                var end
+            }
+            this.$axios({
+                method:"post",
+                url:"http://localhost:8080/mission/addMission",
+                params:{
+                    scheme_title:this.form.name,
+                    scheme_description:this.form.describe,
+                    scheme_start_time:start,
+                    scheme_end_time:end,
+                    scheme_date:date,
+                    priority:this.form.priority,
+                    state:'0',
+                    tag_name:this.form.tag_name,
+                    user_id:2,
+                    repetition:0
+                }
+            }).then(res=>{
+                console.log(res)
+                // 从后端重新获取用户当天的任务列表
+                this.$axios({
+                    method:"get",
+                    url:"http://localhost:8080/mission/getList",
+                    params:{
+                        req:this.req
+                    }
+                }).then(res=>{
+                    if(res.data.status==-1){
+                        
+                    }
+                    else{
+                    for(var i=0;i<res.data.length;i++){
+                        if(res.data[i].state=="1"){
+                            res.data.splice(i,1)
+                            i=i-1
+                            console.log("删除",res)
+                        }
+                    }
+                    for(var i=0;i<res.data.length;i++){
+                        console.log(res.data[i].state)
+                        if(res.data[i].schemeStartTime == null){
+                            res.data[i].schemeStartTime='今天'
+                        }
+                        else{
+                            var length = res.data[i].schemeStartTime.length
+                            if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
+                        }
+                    }
+                    this.todolist = res.data
+                    this.$forceUpdate()
+                    }
+                })
+            })
+        },
+        getscheme(){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                if(res.data.status==-1){
+                }
+                else{
+                for(var i=0;i<res.data.length;i++){
+                    if(res.data[i].state=="1"){
+                        res.data.splice(i,1)
+                        i=i-1
+                        console.log("删除",res)
+                    }
+                }
+                for(var i=0;i<res.data.length;i++){
+                    console.log(res.data[i].state)
+                    if(res.data[i].schemeStartTime == null){
+                        res.data[i].schemeStartTime='今天'
+                    }
+                    else{
+                        var length = res.data[i].schemeStartTime.length
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
+                }
+                this.todolist = res.data
+                }
+            })
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/getCheckList",
+                params:{
+                    req:this.req
+                }
+            }).then(res=>{
+                console.log(res)
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                    this.checklist = res.data
+                }
+            })
+
+        }
+    },
+    mounted(){
+        this.getDate()
+        this.getscheme()
+        this.getFailedList()
+        this.getFutureList()
+    },
 }
 </script>
 
 <template>
 <div>
+    <n-scrollbar style="max-height: 570px">
 <div class="title">待办集</div>
 <div class="input">
                 <el-input v-model="mission" placeholder="添加日程到待办集"  @click="visible=true">
@@ -62,15 +255,25 @@ export default{
           <div class="collapse-title">已过期</div>
         </template>
         <div class="course">
-            <div  v-for="(item) in courseData" :key="item.courseId">
-            <el-row class="courseItem" >
-                <el-col :span="4" class="courseTime">
-                    {{item.courseTime}}
-                </el-col>
-                <el-col :span="19" class="courseName">
-                    {{item.courseName}}
-                </el-col>
-            </el-row>
+            <div v-for="(scheme) in failedlist" :key = "scheme.schemeId">
+                <el-row class="scheme" @click="godetail(scheme.schemeId)">
+                    <el-col :span="1">
+                    <el-checkbox v-model = "complete" size="large"/>
+                    </el-col>
+                    <el-col :span="4" style="color:#EA3D2F">
+                        {{scheme.schemeStartTime}}
+                    </el-col>
+                    <el-col :span="10">
+                        {{scheme.schemeTitle}}
+                    </el-col>
+                    <el-col :span="4" class="label">
+                        <el-tag v-if="scheme.tagName=='学习'">{{scheme.tagName}}</el-tag>
+                        <el-tag type="success" v-if="scheme.tagName=='代码'||scheme.tagName=='软测'">{{scheme.tagName}}</el-tag>
+                    </el-col>
+                    <el-col :span="2">
+                        ···
+                    </el-col>
+                </el-row>
             </div>
         </div>
       </el-collapse-item>
@@ -95,13 +298,48 @@ export default{
                         {{scheme.schemeTitle}}
                     </el-col>
                     <el-col :span="4" class="label">
-                        {{scheme.tagName}}
+                        <el-tag v-if="scheme.tagName=='学习'">{{scheme.tagName}}</el-tag>
+                        <el-tag type="success" v-if="scheme.tagName=='代码'||scheme.tagName=='软测'">{{scheme.tagName}}</el-tag>
                     </el-col>
                     <el-col :span="2">
                         ···
                     </el-col>
                 </el-row>
             </div>
+            <div class="checklist" v-for="(check) in checklist" :key = "check.checkId">
+                    <el-row class="scheme">
+                        <el-col :span="1">
+                        <el-checkbox v-model = "complete" size="large"/>
+                        </el-col>
+                        <el-col :span="4" class="schemeTime">
+                            {{check.repetitionScope}}
+                        </el-col>
+                        <el-col :span="10">
+                            {{check.schemeTitle}}
+                        </el-col>
+                        <el-col :span="4">
+                            <el-tag>{{check.tagName}}</el-tag>
+                        </el-col>
+                        <el-col :span="2">
+                             <el-dropdown trigger="click">
+                                <span class="el-dropdown-link">
+                                <el-icon><MoreFilled /></el-icon>
+                                </span>
+                                <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item :icon="Plus">Action 1</el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlusFilled">
+                                    Action 2
+                                    </el-dropdown-item>
+                                    <el-dropdown-item :icon="CirclePlus">Action 3</el-dropdown-item>
+                                    <el-dropdown-item :icon="Check">Action 4</el-dropdown-item>
+                                    <el-dropdown-item :icon="CircleCheck">Action 5</el-dropdown-item>
+                                </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </el-col>
+                    </el-row>
+                </div>
         </div>
 
        <el-dialog v-model="visible">
@@ -183,26 +421,27 @@ export default{
           <template #title >
             <div class="collapse-title">以后</div>
             </template>
-        <div class="check">
-                <div class="checklist" v-for="(check) in checklist" :key = "check.checkId">
-                    <el-row class="scheme">
-                        <el-col :span="1">
-                        <el-checkbox v-model = "complete" size="large"/>
-                        </el-col>
-                        <el-col :span="4" class="schemeTime">
-                            {{check.checkTime}}
-                        </el-col>
-                        <el-col :span="10">
-                            {{check.checkTitle}}
-                        </el-col>
-                        <el-col :span="4">
-                            {{check.checkLabel}}
-                        </el-col>
-                        <el-col :span="2">
-                            ···
-                        </el-col>
-                    </el-row>
-                </div>
+                <div class="check">
+                 <div v-for="(scheme) in futurelist" :key = "scheme.schemeId">
+                <el-row class="scheme" @click="godetail(scheme.schemeId)">
+                    <el-col :span="1">
+                    <el-checkbox v-model = "complete" size="large"/>
+                    </el-col>
+                    <el-col :span="4" class="schemeTime">
+                        {{scheme.schemeStartTime}}
+                    </el-col>
+                    <el-col :span="10">
+                        {{scheme.schemeTitle}}
+                    </el-col>
+                    <el-col :span="4" class="label">
+                        <el-tag v-if="scheme.tagName=='学习'">{{scheme.tagName}}</el-tag>
+                        <el-tag type="success" v-if="scheme.tagName=='代码'||scheme.tagName=='软测'">{{scheme.tagName}}</el-tag>
+                    </el-col>
+                    <el-col :span="2">
+                        ···
+                    </el-col>
+                </el-row>
+            </div>
     </div>
       </el-collapse-item>
             <el-collapse-item name="4">
@@ -233,6 +472,7 @@ export default{
       </el-collapse-item>
     </el-collapse>
     </div>
+    </n-scrollbar>
 </div>
 </template>
 

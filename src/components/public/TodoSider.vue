@@ -56,7 +56,9 @@ export default {
     </div>
     <div v-if="msg!=-1&&msg!=null" class="todoInfo" :key="getMission()">
       <div class="head"><el-checkbox v-model = "complete" size="large"/>{{schemeTitle}}</div>
-      <div class="description">{{schemeDescription}}</div>
+      <div class="description">
+        <input v-model="schemeDescription" class="input"/> 
+        </div>
       <div class="picture">
         <img class="pic" src="@/assets/illustration/illu.png"/>
         <div><span>“The best preparation for tomorrow is doing your best today.”</span></div>
@@ -116,5 +118,13 @@ export default {
   width: 16em;
   margin-top: 16em;
   margin-left: 5em;
+}
+.input{
+    border: 0;
+    BACKGROUND-COLOR: transparent;
+}
+input:focus{
+    border: #367BF5 !important;
+    outline: none;
 }
 </style>

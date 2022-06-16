@@ -1,5 +1,6 @@
 <script>
 import DatePicker from '@/components/public/DatePicker.vue';
+import { NScrollbar } from 'naive-ui';
 export default {
      data(){
         return{
@@ -7,22 +8,23 @@ export default {
                 {
                     courseId:1,
                     courseTime:"8:00 - 9:35",
-                    courseName:"用户交互技术"
+                    courseName:"操作系统"
+                },
+                {
+                    courseId:2,
+                    courseTime:"15:30 - 17:05",
+                    courseName:"中国传统插花艺术"
+                },
+                {
+                    courseId:3,
+                    courseTime:"19:00 - 21:25",
+                    courseName:"概率论"
                 }
             ],
             mission:"",
             todolist:[
             ],
-            checklist:[
-                {
-                    checkId:1,
-                    checkTime:"10:00 - 11:35",
-                    checkTitle:"写项目作业",
-                    checkPriority:"",
-                    checkState:1,
-                    checkLabel:"学习"
-                }
-            ],
+            checklist:[],
             today:'30',
             yesterday:'16',
             daybeforeyesterday:'15',
@@ -47,6 +49,9 @@ export default {
                 time2:''
                 }
         }
+    },
+    components: {
+        NScrollbar
     },
      methods:{
         getDate(){
@@ -134,7 +139,11 @@ export default {
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
-                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                       if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
                     }
                 }
                 this.todolist = res.data
@@ -177,7 +186,11 @@ export default {
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
-                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
                     }
                 }
                 this.todolist = res.data
@@ -191,7 +204,12 @@ export default {
                 }
             }).then(res=>{
                 console.log(res)
-                this.checklist = res.data
+                if(res.data.status==-1){
+                    
+                }
+                else{
+                    this.checklist = res.data
+                }
             })
 
         },
@@ -229,7 +247,11 @@ export default {
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
-                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
                     }
                     
                 }
@@ -319,7 +341,11 @@ export default {
                     }
                     else{
                         var length = res.data[i].schemeStartTime.length
-                        res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                        if(res.data[i].schemeEndTime!=null)
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)+'-'+res.data[i].schemeEndTime.substring(length-8,length-3)
+                            else{
+                                res.data[i].schemeStartTime = res.data[i].schemeStartTime.substring(length-8,length-3)
+                            }
                     }
                 }
                 this.todolist = res.data
@@ -328,13 +354,66 @@ export default {
             })
                 
             })
+        },
+        changeDate(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionTime",
+                params:{
+                    scheme_date:'2022/6/17',
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist=this.todolist.splice(i,1)
+                    }
+                }
+                this.$forceUpdate();
+                })
+        },
+        changepriority(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionPriority",
+                params:{
+                    priority:'1',
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist[i].priority='1'
+                    }
+                }
+                this.$forceUpdate();
+                })
+        },
+        changetag(id){
+            this.$axios({
+                method:"get",
+                url:"http://localhost:8080/mission/changeMissionTime",
+                params:{
+                    tag:'生活',
+                    missionID:id
+                }
+            }).then(res=>{
+                console.log(res)
+                for(var i=0;i<this.todolist.length;i++){
+                    if(this.todolist[i].schemeId==id){
+                        this.todolist[i].tag_name='生活'
+                    }
+                }
+                this.$forceUpdate();
+                })
         }
     },
     mounted(){
         this.getDate()
         this.getscheme()
     },
-    
     components:{
         DatePicker
     }
@@ -343,6 +422,7 @@ export default {
 
 <template>
 <div class="Listmode">
+<n-scrollbar style="max-height: 570px">
         <el-row>
             <el-col :span="24">
             <div class="daypicker">
@@ -358,7 +438,7 @@ export default {
           <template #title >
           <div class="collapse-title">今日课程</div>
         </template>
-        <div class="course">
+        <div class="course" style="margin-bottom:1em">
             <div  v-for="(item) in courseData" :key="item.courseId">
             <el-row class="courseItem" >
                 <el-col :span="4" class="courseTime">
@@ -414,18 +494,33 @@ export default {
                                     <div>
                                     修改时间
                                     </div>
+                                    <div>
+                                    <el-button @click="changeDate(scheme.schemeId)">明天</el-button>
+                                    <el-button>选择时间</el-button>
+                                    </div>
                                     </el-dropdown-item>
                                     <el-dropdown-item :icon="CirclePlusFilled">
                                     <div>重要程度</div>
+                                    <div>
+                                        <el-button>
+                                        <el-icon  color="#EA3D2F" @click="changepriority(scheme.schemeId)"><Flag /></el-icon></el-button>
+                                         <el-button><el-icon  color="#F3AA18"><Flag /></el-icon></el-button>
+                                         <el-button> <el-icon  color="#2FA84F"><Flag /></el-icon></el-button>
+                                          <el-button> <el-icon  color="#9E9E9E"><Flag /></el-icon></el-button>
+                                    </div>
                                     </el-dropdown-item>
-                                    <el-dropdown-item :icon="CirclePlus">
+                                    <!-- <el-dropdown-item :icon="CirclePlus">
                                     <div>
                                     置顶
-                                    </div></el-dropdown-item>
+                                    </div></el-dropdown-item> -->
                                     <el-dropdown-item :icon="Check">
                                     <div>
                                     修改标签
-                                    </div></el-dropdown-item>
+                                    </div>
+                                    <div > <el-tag style="margin-right:10px">学习</el-tag>
+                                    <el-tag style="margin-right:10px" type="danger" @click="changetag(scheme.schemeId)">生活</el-tag>
+                                    <el-tag type="success">运动</el-tag></div>
+                                    </el-dropdown-item>
                                     <el-dropdown-item :icon="CircleCheck">
                                     <div @click="deleteMission(scheme.schemeId)">
                                     <el-icon><DeleteFilled /></el-icon>
@@ -578,6 +673,7 @@ export default {
       </el-collapse-item>
     </el-collapse>
   </div>
+  </n-scrollbar>
 </div>
 </template>
 
@@ -585,10 +681,11 @@ export default {
 
 .courseItem{
     width: 100%;
-    height: 4em;
+    height: 3.2em;
     display: flex;
     align-items: center;
     font-size: 14px;
+
 }
 .scheme{
     height: 48px;

@@ -50,7 +50,7 @@ type Todo = Partial<EventInput>
 const events = ref<Todo[]>([])
 
 // 颜色
-const [ red, blue, yellow, purple, green ] = ['#B20000', '#0065C1', '#E5C100', '#E6EFFF', '#007505' ]
+const [ red, blue, yellow, purple, green ] = ['#EA3D2F', '#367BF5', '#E5C100', '#E6EFFF', '#007505' ]
 
 // 解析数据库返回的todo为Calendar EventInput
 function parseTodo (todo: RawTodo) {

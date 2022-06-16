@@ -9,11 +9,11 @@ import { RouterLink } from 'vue-router'
         <div class = "mainLeft">
           <div class="mainLogo">
             <div class="logoLeft">
-              <img src="../assets/illustration/loginLogo.png" class="logoImgStyle">
+              <img src="../assets/icon/logowhite.svg" class="logoImgStyle">
             </div>
-            <div class="logoRight">
+            <!-- <div class="logoRight">
               <span class="logoWordStyle">ToDo</span>
-            </div>
+            </div> -->
           </div>
           <div class="mainWord">
             <span class="mainWordStyle">每一天都是有计划的一天</span>
@@ -21,13 +21,14 @@ import { RouterLink } from 'vue-router'
         </div>
         <div class = "mainRight">
           <div class="registerForm">
+            <div class="title">注册</div>
             <el-form>
               <el-form-item>
-                <p class="registerWordSize">注册邮箱</p>
+                <p class="registerWordSize">邮箱</p>
                 <el-input class="inputSize" placeholder="请输入你的注册邮箱"></el-input>
               </el-form-item>
               <el-form-item>
-                <p class="registerWordSize">注册手机号</p>
+                <p class="registerWordSize">手机号</p>
                 <el-input class="inputSize" placeholder="请输入你的注册手机号"></el-input>
               </el-form-item>
               <el-form-item>
@@ -86,7 +87,7 @@ a:hover {
 }
 
 .logoLeft{
-  width: 40%;
+  width: 60%;
 }
 
 .logoRight{
@@ -122,7 +123,7 @@ a:hover {
   display: block;
   color: #FFFFFF;
   font-size: 35px;
-  margin-top: 10%;
+  font-family: 'FZYaoti';
   margin-left: 28%;
 }
 
@@ -135,7 +136,7 @@ a:hover {
 
 .registerWordSize{
   font-size: 20px;
-//margin: 0 0 20px;
+ margin: 0 0 20px;
   text-align: left;
   font-weight: bold;
 }
@@ -145,6 +146,11 @@ a:hover {
   margin-top: 10%;
   background-color: #306fe0;
   height: 40px;
+}
+.title{
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .returnMsg{

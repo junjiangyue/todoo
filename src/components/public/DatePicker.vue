@@ -8,7 +8,7 @@
             <ul class="swiper-slide" v-for="(item,i) in currentList" ref="ul">
               <li v-for="(k,j) in item" @click="setCurrent(j,k.sendDate)">
                 <i class="iconfont icon-jin" v-if="k.now"></i>
-                <span style="font-size:14px" v-else :class="{active:currentClassStatus(i,j)}">{{k.showDate}}</span>
+                <span style="font-size:14px;cursor:pointer" v-else :class="{active:currentClassStatus(i,j)}">{{k.showDate}}</span>
               </li>
             </ul>
           </div>

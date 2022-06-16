@@ -30,7 +30,7 @@ import { RouterLink } from 'vue-router'
     <router-link to="/todo-asset">
       <div class="daily">
         <el-row :gutter="20">
-            <el-col :span="6"><img class="icon-left" src="@/assets/icon/daily.png"/></el-col>
+            <el-col :span="6"><img class="icon-left" src="@/assets/icon/vector.svg"/></el-col>
               <el-col :span="18">
                 <h4>待办集</h4>
                 <p class="body">Todo Asset</p>
@@ -41,7 +41,7 @@ import { RouterLink } from 'vue-router'
     <router-link to="/statistic">
       <div class="daily">
       <el-row :gutter="20">
-          <el-col :span="6"><img class="icon-left" src="@/assets/icon/daily.png"/></el-col>
+          <el-col :span="6"><img class="icon-left" src="@/assets/icon/statistic.png"/></el-col>
             <el-col :span="18">
               <h4>数据统计</h4>
               <p class="body">Statistics</p>
@@ -52,7 +52,7 @@ import { RouterLink } from 'vue-router'
     <router-link to="/settings">
       <div class="daily">
       <el-row :gutter="20">
-          <el-col :span="6"><img class="icon-left" src="@/assets/icon/daily.png"/></el-col>
+          <el-col :span="6"><img class="icon-left" src="@/assets/icon/wrench.png"/></el-col>
             <el-col :span="18">
               <h4>设置</h4>
               <p class="body">Settings</p>

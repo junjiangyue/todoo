@@ -30,7 +30,7 @@ interface RawTodo {
 const todos = ref<EventInput[]>([])
 
 // 颜色别名
-const [ red, blue, yellow, purple, green ] = ['#B20000', '#0065C1', '#E5C100', '#E6EFFF', '#007505' ]
+const [ red, blue, yellow, purple, green ] = ['#F178B6', '#367BF5', '#F3AA18', '#A5A6F6', '#069697' ]
 
 onBeforeMount(async () => {
   const res = await axios.get(`/api/alltodo`)
@@ -174,7 +174,7 @@ const calendarOptions: CalendarOptions = {
 
 <style scoped lang="scss">
 $blue-shallow: #E6EFFF;
-$blue: #0065C1;
+$blue: #367BF5;
 $blue-deep: #004889;
 
 :deep(.fc-event-time) {
@@ -182,6 +182,7 @@ $blue-deep: #004889;
 }
 
 :deep(.fc-button) {
+  border:0px;
   background-color: $blue;
   &:hover {
     background-color: $blue-deep;
